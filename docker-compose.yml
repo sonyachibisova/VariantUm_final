@@ -1,0 +1,141 @@
+version: "3.9"
+
+# ============================================================
+# ВариантУм — локальный стек для разработки и демо
+# Команды:
+#   docker compose up -d postgres redis minio   # только инфра
+#   docker compose up --build -d                # всё, включая backend/frontend
+# ============================================================
+
+services:
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: variantum-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-variantum}
+      POSTGRES_USER: ${DB_USER:-variantum}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme_strong_password}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-variantum} -d ${DB_NAME:-variantum}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: variantum-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  minio:
+    image: minio/minio:latest
+    container_name: variantum-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-changeme_minio_secret}
+    ports:
+      - "9000:9000"   # S3 API
+      - "9001:9001"   # Web console
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # Одноразовый сервис: создаёт бакет при старте MinIO
+  minio-init:
+    image: minio/mc:latest
+    container_name: variantum-minio-init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 ${MINIO_ACCESS_KEY:-minioadmin} ${MINIO_SECRET_KEY:-changeme_minio_secret};
+      mc mb --ignore-existing local/${MINIO_BUCKET:-variantum-files};
+      mc anonymous set download local/${MINIO_BUCKET:-variantum-files};
+      exit 0;
+      "
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: variantum-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: ${APP_PROFILE:-dev}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-variantum}
+      DB_USER: ${DB_USER:-variantum}
+      DB_PASSWORD: ${DB_PASSWORD:-changeme_strong_password}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_PUBLIC_ENDPOINT: ${MINIO_PUBLIC_ENDPOINT:-http://localhost:9000}
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-changeme_minio_secret}
+      MINIO_BUCKET: ${MINIO_BUCKET:-variantum-files}
+      GIGACHAT_API_URL: ${GIGACHAT_API_URL:-https://gigachat.devices.sberbank.ru/api/v1}
+      GIGACHAT_AUTH_URL: ${GIGACHAT_AUTH_URL:-https://ngw.devices.sberbank.ru:9443/api/v2/oauth}
+      GIGACHAT_CLIENT_ID: ${GIGACHAT_CLIENT_ID:-}
+      GIGACHAT_CLIENT_SECRET: ${GIGACHAT_CLIENT_SECRET:-}
+      GIGACHAT_SCOPE: ${GIGACHAT_SCOPE:-GIGACHAT_API_PERS}
+      GIGACHAT_MODEL: ${GIGACHAT_MODEL:-GigaChat-2-Pro}
+      GIGACHAT_MODEL_LITE: ${GIGACHAT_MODEL_LITE:-GigaChat}
+      GIGACHAT_MODEL_MAX: ${GIGACHAT_MODEL_MAX:-GigaChat-2-Pro}
+      GIGACHAT_TIMEOUT_SECONDS: ${GIGACHAT_TIMEOUT_SECONDS:-180}
+      GIGACHAT_MAX_TOKENS: ${GIGACHAT_MAX_TOKENS:-32768}
+      JWT_SECRET: ${JWT_SECRET:-CHANGE_ME_to_long_random_base64_string_at_least_64_bytes_dev_only}
+      JWT_ACCESS_TOKEN_TTL: ${JWT_ACCESS_TOKEN_TTL:-604800}
+      JWT_REFRESH_TOKEN_TTL: ${JWT_REFRESH_TOKEN_TTL:-2592000}
+      RATE_LIMIT_LLM_PER_HOUR: ${RATE_LIMIT_LLM_PER_HOUR:-30}
+      FRONTEND_BASE_URL: ${FRONTEND_BASE_URL:-http://localhost:5173}
+      SPRING_FLYWAY_VALIDATE_ON_MIGRATE: "false"
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: /api
+    container_name: variantum-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+
+volumes:
+  postgres-data:
+  redis-data:
+  minio-data:

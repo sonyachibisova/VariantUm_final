@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Littera Plain';
+  src: url('/fonts/LitteraPlainRegular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Littera Plain';
+  src: url('/fonts/LitteraPlainBold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Littera Plain';
+  src: url('/fonts/LitteraPlainLight.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@keyframes ticker-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@layer base {
+  :root {
+    font-family: 'Littera Plain', 'Inter', system-ui, sans-serif;
+    color-scheme: light;
+  }
+
+  body {
+    @apply bg-white text-gray-900 antialiased;
+  }
+
+  button, input, textarea, select {
+    font-family: inherit;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply max-w-3xl mx-auto px-6 py-8;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl
+           bg-[#22A139] hover:bg-[#1a8a30] active:bg-[#1a7f2d]
+           text-white font-semibold px-6 py-3 text-sm
+           transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl
+           bg-gray-200 hover:bg-gray-300
+           text-gray-700 font-semibold px-6 py-3 text-sm
+           transition-colors;
+  }
+
+  .input-base {
+    @apply w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm
+           text-gray-700 placeholder-gray-400 bg-white
+           focus:outline-none focus:ring-2 focus:ring-[#22A139]/30 focus:border-[#22A139]
+           transition-colors;
+  }
+
+  .section-card {
+    @apply bg-gray-50 border border-gray-200 rounded-2xl p-5;
+  }
+}

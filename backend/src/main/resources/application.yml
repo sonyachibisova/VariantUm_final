@@ -1,0 +1,132 @@
+spring:
+  application:
+    name: variantum-backend
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:variantum}
+    username: ${DB_USER:variantum}
+    password: ${DB_PASSWORD:changeme_strong_password}
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: false
+        jdbc:
+          time_zone: UTC
+    open-in-view: false
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 5s
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 12MB
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+  compression:
+    enabled: true
+  error:
+    include-message: always
+    include-binding-errors: always
+
+# ===== Кастомные секции приложения =====
+
+app:
+  base-url: ${APP_BASE_URL:http://localhost:8080}
+  frontend-base-url: ${FRONTEND_BASE_URL:http://localhost:5173}
+
+  jwt:
+    secret: ${JWT_SECRET:CHANGE_ME_to_long_random_base64_string_at_least_64_bytes_dev_only}
+    access-token-ttl-seconds: ${JWT_ACCESS_TOKEN_TTL:604800}
+    refresh-token-ttl-seconds: ${JWT_REFRESH_TOKEN_TTL:2592000}
+    cookie-name-access: variantum_access
+    cookie-name-refresh: variantum_refresh
+
+  rate-limit:
+    llm-per-hour: ${RATE_LIMIT_LLM_PER_HOUR:30}
+    upload-per-hour: ${RATE_LIMIT_UPLOAD_PER_HOUR:50}
+
+  minio:
+    endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+    public-endpoint: ${MINIO_PUBLIC_ENDPOINT:http://localhost:9000}
+    access-key: ${MINIO_ACCESS_KEY:minioadmin}
+    secret-key: ${MINIO_SECRET_KEY:changeme_minio_secret}
+    bucket: ${MINIO_BUCKET:variantum-files}
+    presigned-url-ttl-minutes: 15
+
+  gigachat:
+    api-url: ${GIGACHAT_API_URL:https://gigachat.devices.sberbank.ru/api/v1}
+    auth-url: ${GIGACHAT_AUTH_URL:https://ngw.devices.sberbank.ru:9443/api/v2/oauth}
+    client-id: ${GIGACHAT_CLIENT_ID:}
+    client-secret: ${GIGACHAT_CLIENT_SECRET:}
+    scope: ${GIGACHAT_SCOPE:GIGACHAT_API_PERS}
+    # Основная модель (Pro) — генерация, AI-правка, валидация
+    model: ${GIGACHAT_MODEL:GigaChat-2-Pro}
+    # Лёгкая модель (Lite) — анализ, очистка текста, рекомендации; фолбэк при 402 от Pro
+    model-lite: ${GIGACHAT_MODEL_LITE:GigaChat}
+    # Максимальная модель (Max) — сложные задачи по математике/физике (опционально)
+    model-max: ${GIGACHAT_MODEL_MAX:GigaChat-2-Pro}
+    timeout-seconds: ${GIGACHAT_TIMEOUT_SECONDS:90}
+    temperature-generate: 0.7
+    temperature-validate: 0.2
+    top-p: 0.9
+    # 8192 хватает для 1 варианта и не даёт модели «писать вечно» (раньше 32768 → таймаут/обрезка).
+    # Если генерируешь много вариантов за раз — подними обратно.
+    max-tokens: ${GIGACHAT_MAX_TOKENS:8192}
+
+  ocr:
+    tessdata-path: ${TESSDATA_PREFIX:/usr/share/tesseract-ocr/4.00/tessdata/}
+    language: rus+eng
+
+  cors:
+    allowed-origins:
+      - ${FRONTEND_BASE_URL:http://localhost:5173}
+      - http://localhost:5173
+      - http://localhost:3000
+      - http://localhost
+
+logging:
+  level:
+    root: ${LOG_LEVEL:INFO}
+    ru.variantum: ${LOG_LEVEL_VARIANTUM:DEBUG}
+    org.springframework.security: INFO
+    org.hibernate.SQL: WARN
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: alpha
+    tagsSorter: alpha
+  api-docs:
+    path: /v3/api-docs
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized

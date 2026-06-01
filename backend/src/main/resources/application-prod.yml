@@ -1,0 +1,13 @@
+spring:
+  jpa:
+    show-sql: false
+
+logging:
+  level:
+    root: INFO
+    ru.variantum: INFO
+
+management:
+  endpoint:
+    health:
+      show-details: never

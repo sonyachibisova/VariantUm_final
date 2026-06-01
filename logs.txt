@@ -1,0 +1,1289 @@
+﻿variantum-backend  | 
+variantum-backend  |   .   ____          _            __ _ _
+variantum-backend  |  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+variantum-backend  | ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+variantum-backend  |  \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+variantum-backend  |   '  |____| .__|_| |_|_| |_\__, | / / / /
+variantum-backend  |  =========|_|==============|___/=/_/_/_/
+variantum-backend  |  :: Spring Boot ::                (v3.2.5)
+variantum-backend  | 
+variantum-backend  | 2026-05-25T14:41:44.005Z  INFO 7 --- [variantum-backend] [           main] ru.variantum.VariantumApplication        : Starting VariantumApplication v0.1.0-SNAPSHOT using Java 21.0.11 with PID 7 (/app/app.jar started by root in /app)
+variantum-backend  | 2026-05-25T14:41:44.007Z DEBUG 7 --- [variantum-backend] [           main] ru.variantum.VariantumApplication        : Running with Spring Boot v3.2.5, Spring v6.1.6
+variantum-backend  | 2026-05-25T14:41:44.008Z  INFO 7 --- [variantum-backend] [           main] ru.variantum.VariantumApplication        : The following 1 profile is active: "dev"
+variantum-backend  | 2026-05-25T14:41:45.505Z  INFO 7 --- [variantum-backend] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+variantum-backend  | 2026-05-25T14:41:45.507Z  INFO 7 --- [variantum-backend] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+variantum-backend  | 2026-05-25T14:41:45.652Z  INFO 7 --- [variantum-backend] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 137 ms. Found 9 JPA repository interfaces.
+variantum-backend  | 2026-05-25T14:41:45.672Z  INFO 7 --- [variantum-backend] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+variantum-backend  | 2026-05-25T14:41:45.673Z  INFO 7 --- [variantum-backend] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+variantum-backend  | 2026-05-25T14:41:45.690Z  INFO 7 --- [variantum-backend] [           main] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface ru.variantum.repository.ProjectRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+variantum-backend  | 2026-05-25T14:41:45.691Z  INFO 7 --- [variantum-backend] [           main] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface ru.variantum.repository.RecommendationRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+variantum-backend  | 2026-05-25T14:41:45.691Z  INFO 7 --- [variantum-backend] [           main] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface ru.variantum.repository.TaskRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+variantum-backend  | 2026-05-25T14:41:45.692Z  INFO 7 --- [variantum-backend] [           main] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface ru.variantum.repository.ProjectVersionRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+variantum-backend  | 2026-05-25T14:41:45.692Z  INFO 7 --- [variantum-backend] [           main] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface ru.variantum.repository.LlmRequestLogRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+variantum-backend  | 2026-05-25T14:41:45.693Z  INFO 7 --- [variantum-backend] [           main] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface ru.variantum.repository.UploadedFileRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+variantum-backend  | 2026-05-25T14:41:45.693Z  INFO 7 --- [variantum-backend] [           main] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface ru.variantum.repository.RefreshTokenRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+variantum-backend  | 2026-05-25T14:41:45.693Z  INFO 7 --- [variantum-backend] [           main] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface ru.variantum.repository.UserRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+variantum-backend  | 2026-05-25T14:41:45.694Z  INFO 7 --- [variantum-backend] [           main] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface ru.variantum.repository.VariantRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+variantum-backend  | 2026-05-25T14:41:45.694Z  INFO 7 --- [variantum-backend] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 11 ms. Found 0 Redis repository interfaces.
+variantum-backend  | 2026-05-25T14:41:46.562Z  INFO 7 --- [variantum-backend] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+variantum-backend  | 2026-05-25T14:41:46.575Z  INFO 7 --- [variantum-backend] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+variantum-backend  | 2026-05-25T14:41:46.575Z  INFO 7 --- [variantum-backend] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.20]
+variantum-backend  | 2026-05-25T14:41:46.629Z  INFO 7 --- [variantum-backend] [           main] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring embedded WebApplicationContext
+variantum-backend  | 2026-05-25T14:41:46.630Z  INFO 7 --- [variantum-backend] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2523 ms
+variantum-backend  | 2026-05-25T14:41:46.903Z DEBUG 7 --- [variantum-backend] [           main] r.v.security.JwtAuthenticationFilter     : Filter 'jwtAuthenticationFilter' configured for use
+variantum-backend  | 2026-05-25T14:41:46.905Z DEBUG 7 --- [variantum-backend] [           main] o.s.w.f.ServerHttpObservationFilter      : Filter 'webMvcObservationFilter' configured for use
+variantum-backend  | 2026-05-25T14:41:47.119Z  INFO 7 --- [variantum-backend] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+variantum-backend  | 2026-05-25T14:41:47.275Z  INFO 7 --- [variantum-backend] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@5f5923ef
+variantum-backend  | 2026-05-25T14:41:47.276Z  INFO 7 --- [variantum-backend] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+variantum-backend  | 2026-05-25T14:41:47.305Z  INFO 7 --- [variantum-backend] [           main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:postgresql://postgres:5432/variantum (PostgreSQL 16.14)
+variantum-backend  | 2026-05-25T14:41:47.361Z  INFO 7 --- [variantum-backend] [           main] o.f.core.internal.command.DbValidate     : Successfully validated 2 migrations (execution time 00:00.035s)
+variantum-backend  | 2026-05-25T14:41:47.382Z  INFO 7 --- [variantum-backend] [           main] o.f.core.internal.command.DbMigrate      : Current version of schema "public": 2
+variantum-backend  | 2026-05-25T14:41:47.385Z  INFO 7 --- [variantum-backend] [           main] o.f.core.internal.command.DbMigrate      : Schema "public" is up to date. No migration necessary.
+variantum-backend  | 2026-05-25T14:41:47.481Z  INFO 7 --- [variantum-backend] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+variantum-backend  | 2026-05-25T14:41:47.531Z  INFO 7 --- [variantum-backend] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.4.Final
+variantum-backend  | 2026-05-25T14:41:47.563Z  INFO 7 --- [variantum-backend] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+variantum-backend  | 2026-05-25T14:41:47.666Z  WARN 7 --- [variantum-backend] [           main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+variantum-backend  | 2026-05-25T14:41:47.801Z  INFO 7 --- [variantum-backend] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+variantum-backend  | 2026-05-25T14:41:48.646Z  INFO 7 --- [variantum-backend] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+variantum-backend  | 2026-05-25T14:41:48.722Z  INFO 7 --- [variantum-backend] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+variantum-backend  | 2026-05-25T14:41:49.311Z  INFO 7 --- [variantum-backend] [           main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+variantum-backend  | 2026-05-25T14:41:49.904Z DEBUG 7 --- [variantum-backend] [           main] ru.variantum.service.llm.PromptBuilder   : ╨Я╤А╨╛╨╝╨┐╤В ╨╖╨░╨│╤А╤Г╨╢╨╡╨╜: analyze (1665 ╤Б╨╕╨╝╨▓╨╛╨╗╨╛╨▓)
+variantum-backend  | 2026-05-25T14:41:49.904Z DEBUG 7 --- [variantum-backend] [           main] ru.variantum.service.llm.PromptBuilder   : ╨Я╤А╨╛╨╝╨┐╤В ╨╖╨░╨│╤А╤Г╨╢╨╡╨╜: generate_from_reference (6731 ╤Б╨╕╨╝╨▓╨╛╨╗╨╛╨▓)
+variantum-backend  | 2026-05-25T14:41:49.905Z DEBUG 7 --- [variantum-backend] [           main] ru.variantum.service.llm.PromptBuilder   : ╨Я╤А╨╛╨╝╨┐╤В ╨╖╨░╨│╤А╤Г╨╢╨╡╨╜: generate_from_criteria (5058 ╤Б╨╕╨╝╨▓╨╛╨╗╨╛╨▓)
+variantum-backend  | 2026-05-25T14:41:49.905Z DEBUG 7 --- [variantum-backend] [           main] ru.variantum.service.llm.PromptBuilder   : ╨Я╤А╨╛╨╝╨┐╤В ╨╖╨░╨│╤А╤Г╨╢╨╡╨╜: validate (847 ╤Б╨╕╨╝╨▓╨╛╨╗╨╛╨▓)
+variantum-backend  | 2026-05-25T14:41:49.905Z DEBUG 7 --- [variantum-backend] [           main] ru.variantum.service.llm.PromptBuilder   : ╨Я╤А╨╛╨╝╨┐╤В ╨╖╨░╨│╤А╤Г╨╢╨╡╨╜: ai_edit_single (1115 ╤Б╨╕╨╝╨▓╨╛╨╗╨╛╨▓)
+variantum-backend  | 2026-05-25T14:41:49.906Z DEBUG 7 --- [variantum-backend] [           main] ru.variantum.service.llm.PromptBuilder   : ╨Я╤А╨╛╨╝╨┐╤В ╨╖╨░╨│╤А╤Г╨╢╨╡╨╜: ai_edit_all (1357 ╤Б╨╕╨╝╨▓╨╛╨╗╨╛╨▓)
+variantum-backend  | 2026-05-25T14:41:49.906Z DEBUG 7 --- [variantum-backend] [           main] ru.variantum.service.llm.PromptBuilder   : ╨Я╤А╨╛╨╝╨┐╤В ╨╖╨░╨│╤А╤Г╨╢╨╡╨╜: estimate_time (574 ╤Б╨╕╨╝╨▓╨╛╨╗╨╛╨▓)
+variantum-backend  | 2026-05-25T14:41:49.907Z DEBUG 7 --- [variantum-backend] [           main] ru.variantum.service.llm.PromptBuilder   : ╨Я╤А╨╛╨╝╨┐╤В ╨╖╨░╨│╤А╤Г╨╢╨╡╨╜: recommend (1153 ╤Б╨╕╨╝╨▓╨╛╨╗╨╛╨▓)
+variantum-backend  | 2026-05-25T14:41:49.907Z DEBUG 7 --- [variantum-backend] [           main] ru.variantum.service.llm.PromptBuilder   : ╨Я╤А╨╛╨╝╨┐╤В ╨╖╨░╨│╤А╤Г╨╢╨╡╨╜: extract_from_image (1378 ╤Б╨╕╨╝╨▓╨╛╨╗╨╛╨▓)
+variantum-backend  | 2026-05-25T14:41:49.907Z DEBUG 7 --- [variantum-backend] [           main] ru.variantum.service.llm.PromptBuilder   : ╨Я╤А╨╛╨╝╨┐╤В ╨╖╨░╨│╤А╤Г╨╢╨╡╨╜: cleanup_text (1036 ╤Б╨╕╨╝╨▓╨╛╨╗╨╛╨▓)
+variantum-backend  | 2026-05-25T14:41:49.908Z  INFO 7 --- [variantum-backend] [           main] ru.variantum.service.llm.PromptBuilder   : ╨Ч╨░╨│╤А╤Г╨╢╨╡╨╜╨╛ 10 ╨┐╤А╨╛╨╝╨┐╤В╨╛╨▓
+variantum-backend  | 2026-05-25T14:41:50.709Z DEBUG 7 --- [variantum-backend] [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 27 mappings in 'requestMappingHandlerMapping'
+variantum-backend  | 2026-05-25T14:41:50.783Z DEBUG 7 --- [variantum-backend] [           main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**, /swagger-ui*/*swagger-initializer.js, /swagger-ui*/**] in 'resourceHandlerMapping'
+variantum-backend  | 2026-05-25T14:41:51.169Z  INFO 7 --- [variantum-backend] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 3 endpoint(s) beneath base path '/actuator'
+variantum-backend  | 2026-05-25T14:41:51.252Z  INFO 7 --- [variantum-backend] [           main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@676f8fab, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@5397c8da, org.springframework.security.web.context.SecurityContextHolderFilter@63f22d37, org.springframework.security.web.header.HeaderWriterFilter@56c1a827, org.springframework.web.filter.CorsFilter@290df888, org.springframework.security.web.authentication.logout.LogoutFilter@1dc0f59d, ru.variantum.security.JwtAuthenticationFilter@4ffe3d42, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@ace10f9, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@619e1cea, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@7a953b17, org.springframework.security.web.session.SessionManagementFilter@257c7d2d, org.springframework.security.web.access.ExceptionTranslationFilter@74ccbafd, org.springframework.security.web.access.intercept.AuthorizationFilter@179273ff]
+variantum-backend  | 2026-05-25T14:41:51.414Z DEBUG 7 --- [variantum-backend] [           main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+variantum-backend  | 2026-05-25T14:41:51.452Z DEBUG 7 --- [variantum-backend] [           main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 2 @ExceptionHandler, 1 ResponseBodyAdvice
+variantum-backend  | 2026-05-25T14:41:52.115Z  INFO 7 --- [variantum-backend] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/api'
+variantum-backend  | 2026-05-25T14:41:52.133Z  INFO 7 --- [variantum-backend] [           main] ru.variantum.VariantumApplication        : Started VariantumApplication in 8.652 seconds (process running for 9.75)
+variantum-backend  | 2026-05-25T14:41:55.475Z  INFO 7 --- [variantum-backend] [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring DispatcherServlet 'dispatcherServlet'
+variantum-backend  | 2026-05-25T14:41:55.475Z  INFO 7 --- [variantum-backend] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+variantum-backend  | 2026-05-25T14:41:55.475Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Detected StandardServletMultipartResolver
+variantum-backend  | 2026-05-25T14:41:55.475Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Detected AcceptHeaderLocaleResolver
+variantum-backend  | 2026-05-25T14:41:55.476Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Detected FixedThemeResolver
+variantum-backend  | 2026-05-25T14:41:55.478Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@5d3658d1
+variantum-backend  | 2026-05-25T14:41:55.478Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.support.SessionFlashMapManager@1cadc7c1
+variantum-backend  | 2026-05-25T14:41:55.479Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+variantum-backend  | 2026-05-25T14:41:55.479Z  INFO 7 --- [variantum-backend] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 4 ms
+variantum-backend  | 2026-05-25T14:41:55.624Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : GET "/api/projects?page=0&size=20", parameters={masked}
+variantum-backend  | 2026-05-25T14:41:55.627Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-1] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to ru.variantum.controller.ProjectController#list(String, Integer, String, int, int)
+variantum-backend  | 2026-05-25T14:41:55.781Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-1] org.hibernate.SQL                        : 
+variantum-backend  |     select
+variantum-backend  |         p1_0.id,
+variantum-backend  |         p1_0.created_at,
+variantum-backend  |         p1_0.custom_prompt,
+variantum-backend  |         p1_0.deleted_at,
+variantum-backend  |         p1_0.difficulty_gradation,
+variantum-backend  |         p1_0.grade,
+variantum-backend  |         p1_0.mode,
+variantum-backend  |         p1_0.params_json,
+variantum-backend  |         p1_0.reference_file_id,
+variantum-backend  |         p1_0.reference_text,
+variantum-backend  |         p1_0.status,
+variantum-backend  |         p1_0.subject,
+variantum-backend  |         p1_0.target_difficulty,
+variantum-backend  |         p1_0.task_type,
+variantum-backend  |         p1_0.title,
+variantum-backend  |         p1_0.topic,
+variantum-backend  |         p1_0.updated_at,
+variantum-backend  |         p1_0.user_id 
+variantum-backend  |     from
+variantum-backend  |         projects p1_0 
+variantum-backend  |     where
+variantum-backend  |         (
+variantum-backend  |             p1_0.deleted_at IS NULL
+variantum-backend  |         ) 
+variantum-backend  |         and p1_0.user_id=? 
+variantum-backend  |     order by
+variantum-backend  |         p1_0.created_at desc 
+variantum-backend  |     offset
+variantum-backend  |         ? rows 
+variantum-backend  |     fetch
+variantum-backend  |         first ? rows only
+variantum-backend  | Hibernate: 
+variantum-backend  |     select
+variantum-backend  |         p1_0.id,
+variantum-backend  |         p1_0.created_at,
+variantum-backend  |         p1_0.custom_prompt,
+variantum-backend  |         p1_0.deleted_at,
+variantum-backend  |         p1_0.difficulty_gradation,
+variantum-backend  |         p1_0.grade,
+variantum-backend  |         p1_0.mode,
+variantum-backend  |         p1_0.params_json,
+variantum-backend  |         p1_0.reference_file_id,
+variantum-backend  |         p1_0.reference_text,
+variantum-backend  |         p1_0.status,
+variantum-backend  |         p1_0.subject,
+variantum-backend  |         p1_0.target_difficulty,
+variantum-backend  |         p1_0.task_type,
+variantum-backend  |         p1_0.title,
+variantum-backend  |         p1_0.topic,
+variantum-backend  |         p1_0.updated_at,
+variantum-backend  |         p1_0.user_id 
+variantum-backend  |     from
+variantum-backend  |         projects p1_0 
+variantum-backend  |     where
+variantum-backend  |         (
+variantum-backend  |             p1_0.deleted_at IS NULL
+variantum-backend  |         ) 
+variantum-backend  |         and p1_0.user_id=? 
+variantum-backend  |     order by
+variantum-backend  |         p1_0.created_at desc 
+variantum-backend  |     offset
+variantum-backend  |         ? rows 
+variantum-backend  |     fetch
+variantum-backend  |         first ? rows only
+variantum-backend  | 2026-05-25T14:41:55.823Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-1] org.hibernate.SQL                        : 
+variantum-backend  |     select
+variantum-backend  |         count(p1_0.id) 
+variantum-backend  |     from
+variantum-backend  |         projects p1_0 
+variantum-backend  |     where
+variantum-backend  |         (
+variantum-backend  |             p1_0.deleted_at IS NULL
+variantum-backend  |         ) 
+variantum-backend  |         and p1_0.user_id=?
+variantum-backend  | Hibernate: 
+variantum-backend  |     select
+variantum-backend  |         count(p1_0.id) 
+variantum-backend  |     from
+variantum-backend  |         projects p1_0 
+variantum-backend  |     where
+variantum-backend  |         (
+variantum-backend  |             p1_0.deleted_at IS NULL
+variantum-backend  |         ) 
+variantum-backend  |         and p1_0.user_id=?
+variantum-backend  | 2026-05-25T14:41:55.832Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-1] org.hibernate.SQL                        : 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | Hibernate: 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | 2026-05-25T14:41:55.836Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-1] org.hibernate.SQL                        : 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | Hibernate: 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | 2026-05-25T14:41:55.838Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-1] org.hibernate.SQL                        : 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | Hibernate: 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | 2026-05-25T14:41:55.841Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-1] org.hibernate.SQL                        : 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | Hibernate: 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | 2026-05-25T14:41:55.844Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-1] org.hibernate.SQL                        : 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | Hibernate: 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | 2026-05-25T14:41:55.849Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-1] org.hibernate.SQL                        : 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | Hibernate: 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | 2026-05-25T14:41:55.852Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-1] org.hibernate.SQL                        : 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | Hibernate: 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | 2026-05-25T14:41:55.856Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-1] org.hibernate.SQL                        : 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | Hibernate: 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | 2026-05-25T14:41:55.859Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-1] org.hibernate.SQL                        : 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | Hibernate: 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | 2026-05-25T14:41:55.862Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-1] org.hibernate.SQL                        : 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | Hibernate: 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | 2026-05-25T14:41:55.864Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-1] org.hibernate.SQL                        : 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | Hibernate: 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | 2026-05-25T14:41:55.867Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-1] org.hibernate.SQL                        : 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | Hibernate: 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | 2026-05-25T14:41:55.869Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-1] org.hibernate.SQL                        : 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | Hibernate: 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | 2026-05-25T14:41:55.873Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-1] org.hibernate.SQL                        : 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | Hibernate: 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | 2026-05-25T14:41:55.876Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-1] org.hibernate.SQL                        : 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | Hibernate: 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | 2026-05-25T14:41:55.879Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-1] org.hibernate.SQL                        : 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | Hibernate: 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | 2026-05-25T14:41:55.881Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-1] org.hibernate.SQL                        : 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | Hibernate: 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | 2026-05-25T14:41:55.884Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-1] org.hibernate.SQL                        : 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | Hibernate: 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | 2026-05-25T14:41:55.885Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-1] org.hibernate.SQL                        : 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | Hibernate: 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | 2026-05-25T14:41:55.887Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-1] org.hibernate.SQL                        : 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | Hibernate: 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | 2026-05-25T14:41:55.906Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-1] m.m.a.RequestResponseBodyMethodProcessor : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+variantum-backend  | 2026-05-25T14:41:55.913Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-1] m.m.a.RequestResponseBodyMethodProcessor : Writing [ProjectPageResponse[projects=[ProjectListItemResponse[projectId=b43d3759-d445-4c63-9f96-b6d1770167b6 (truncated)...]
+variantum-backend  | 2026-05-25T14:41:55.928Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+variantum-backend  | 2026-05-25T14:42:03.846Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : POST "/api/files/upload", parameters={multipart}
+variantum-backend  | 2026-05-25T14:42:03.862Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-2] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to ru.variantum.controller.FileController#upload(MultipartFile, boolean)
+variantum-backend  | 2026-05-25T14:42:04.080Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-2] r.v.service.storage.MinioStorageService  : MinIO stored: user_88e5e52c-ea30-487c-87d9-a416864352d9/files/66811012-d36b-4cf7-9307-ccca854d6837
+variantum-backend  | 2026-05-25T14:42:04.082Z  INFO 7 --- [variantum-backend] [nio-8080-exec-2] r.variantum.service.llm.GigaChatClient   : GigaChat: ╨╖╨░╨┐╤А╨░╤И╨╕╨▓╨░╨╡╨╝ ╨╜╨╛╨▓╤Л╨╣ ╤В╨╛╨║╨╡╨╜. clientId=019e4fff..., scope=GIGACHAT_API_PERS, url=https://ngw.devices.sberbank.ru:9443/api/v2/oauth
+variantum-backend  | 2026-05-25T14:42:04.119Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-2] o.s.w.r.f.client.ExchangeFunctions       : [a50fb91] HTTP POST https://ngw.devices.sberbank.ru:9443/api/v2/oauth
+variantum-backend  | 2026-05-25T14:42:04.745Z DEBUG 7 --- [variantum-backend] [or-http-epoll-2] org.springframework.web.HttpLogging      : [a50fb91] Writing form fields [scope] (content masked)
+variantum-backend  | 2026-05-25T14:42:04.915Z DEBUG 7 --- [variantum-backend] [or-http-epoll-2] o.s.w.r.f.client.ExchangeFunctions       : [a50fb91] [fa66b39f-1] Response 200 OK
+variantum-backend  | 2026-05-25T14:42:04.930Z DEBUG 7 --- [variantum-backend] [or-http-epoll-2] org.springframework.web.HttpLogging      : [a50fb91] [fa66b39f-1] Decoded "{"access_token":"eyJjdHkiOiJqd3QiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwiYWxnIjoiUlNBLU9BRVAtMjU2In0.sL7QYS6 (truncated)..."
+variantum-backend  | 2026-05-25T14:42:04.930Z  INFO 7 --- [variantum-backend] [or-http-epoll-2] r.variantum.service.llm.GigaChatClient   : GigaChat auth ╨╛╤В╨▓╨╡╤В: HTTP 200 ╤В╨╡╨╗╨╛: {"access_token":"eyJjdHkiOiJqd3QiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwiYWxnIjoiUlNBLU9BRVAtMjU2In0.sL7QYS6RCVFSPXsxiaJyoE315_ZwT7Nb6H2QeK5lFHbN1l5BqpJkF0UHiUIVpl-mo74tu8YUIuMWkbvnKp9dJwzsYg9kYaVx8XKUPcry8GlUWY5bBAbd285SazjW1vW7WC1cMpd0FpL_UiVjAPbQFgX1ImYxbiu-HkVObsUixWS7ulhzQ4YO6dEam4XU1oXfZBiFogE1Fx9g-EG
+variantum-backend  | 2026-05-25T14:42:04.950Z  INFO 7 --- [variantum-backend] [or-http-epoll-2] r.variantum.service.llm.GigaChatClient   : GigaChat: ╤В╨╛╨║╨╡╨╜ ╨┐╨╛╨╗╤Г╤З╨╡╨╜, ╨┤╨╡╨╣╤Б╤В╨▓╨╕╤В╨╡╨╗╨╡╨╜ ╨┤╨╛ 2026-05-25T15:11:04.530Z
+variantum-backend  | 2026-05-25T14:42:04.958Z DEBUG 7 --- [variantum-backend] [or-http-epoll-2] o.s.w.r.f.client.ExchangeFunctions       : [5dc6f3b9] HTTP POST https://gigachat.devices.sberbank.ru/api/v1/files
+variantum-backend  | 2026-05-25T14:42:05.629Z DEBUG 7 --- [variantum-backend] [or-http-epoll-2] org.springframework.web.HttpLogging      : [5dc6f3b9] Encoding parts [file, purpose] (content masked)
+variantum-backend  | 2026-05-25T14:42:09.661Z DEBUG 7 --- [variantum-backend] [or-http-epoll-2] o.s.w.r.f.client.ExchangeFunctions       : [5dc6f3b9] [bd4dd420-1] Response 200 OK
+variantum-backend  | 2026-05-25T14:42:09.665Z DEBUG 7 --- [variantum-backend] [or-http-epoll-2] org.springframework.web.HttpLogging      : [5dc6f3b9] [bd4dd420-1] Decoded "{"id":"8d57ff41-6b3b-4da2-b22e-ccd89574002f","object":"file","bytes":42877,"access_policy":"private" (truncated)..."
+variantum-backend  | 2026-05-25T14:42:09.665Z  INFO 7 --- [variantum-backend] [or-http-epoll-2] r.variantum.service.llm.GigaChatClient   : GigaChat upload ╤Д╨░╨╣╨╗╨░: HTTP 200 ╤В╨╡╨╗╨╛: {"id":"8d57ff41-6b3b-4da2-b22e-ccd89574002f","object":"file","bytes":42877,"access_policy":"private","created_at":1779720129,"filename":"phpsosbAQ_Kontrolnaya-rabota-po-geometrii-podobie-treugolnikov_
+variantum-backend  | 2026-05-25T14:42:09.669Z  INFO 7 --- [variantum-backend] [nio-8080-exec-2] r.variantum.service.llm.GigaChatClient   : GigaChat vision [GigaChat-2-Pro]: completion ╤Б ╤Д╨░╨╣╨╗╨╛╨╝ 8d57ff41-6b3b-4da2-b22e-ccd89574002f
+variantum-backend  | 2026-05-25T14:42:09.669Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-2] r.variantum.service.llm.GigaChatClient   : GigaChat: ╨╕╤Б╨┐╨╛╨╗╤М╨╖╤Г╨╡╨╝ ╨║╤Н╤И╨╕╤А╨╛╨▓╨░╨╜╨╜╤Л╨╣ ╤В╨╛╨║╨╡╨╜, ╨┤╨╡╨╣╤Б╤В╨▓╨╕╤В╨╡╨╗╨╡╨╜ ╨┤╨╛ 2026-05-25T15:11:04.530Z
+variantum-backend  | 2026-05-25T14:42:09.672Z  INFO 7 --- [variantum-backend] [nio-8080-exec-2] r.variantum.service.llm.GigaChatClient   : GigaChat: ╨╛╤В╨┐╤А╨░╨▓╨╗╤П╨╡╨╝ ╨╖╨░╨┐╤А╨╛╤Б [GigaChat-2-Pro] ╨║ https://gigachat.devices.sberbank.ru/api/v1
+variantum-backend  | 2026-05-25T14:42:09.674Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-2] o.s.w.r.f.client.ExchangeFunctions       : [793269a9] HTTP POST https://gigachat.devices.sberbank.ru/api/v1/chat/completions
+variantum-backend  | 2026-05-25T14:42:09.685Z DEBUG 7 --- [variantum-backend] [or-http-epoll-2] org.springframework.web.HttpLogging      : [793269a9] Encoding [CompletionRequest[model=GigaChat-2-Pro, messages=[Message[role=user, content=╨в╤Л тАФ ╨░╤Б╤Б╨╕╤Б╤В╨╡╨╜╤В ╤Г╤З╨╕╤В╨╡╨╗╤П. (truncated)...]
+variantum-backend  | 2026-05-25T14:42:10.536Z DEBUG 7 --- [variantum-backend] [or-http-epoll-2] o.s.w.r.f.client.ExchangeFunctions       : [793269a9] [bd4dd420-2] Response 402 PAYMENT_REQUIRED
+variantum-backend  | 2026-05-25T14:42:10.539Z DEBUG 7 --- [variantum-backend] [or-http-epoll-2] org.springframework.web.HttpLogging      : [793269a9] [bd4dd420-2] Decoded "{"status":402,"message":"Payment Required"}<EOL>"
+variantum-backend  | 2026-05-25T14:42:10.540Z  INFO 7 --- [variantum-backend] [or-http-epoll-2] r.variantum.service.llm.GigaChatClient   : GigaChat completion ╨╛╤В╨▓╨╡╤В: HTTP 402 ╤В╨╡╨╗╨╛(44 ╤Б╨╕╨╝╨▓╨╛╨╗╨╛╨▓): {"status":402,"message":"Payment Required"}тЖ╡
+variantum-backend  | 2026-05-25T14:42:10.545Z DEBUG 7 --- [variantum-backend] [or-http-epoll-2] o.s.w.r.f.client.ExchangeFunctions       : [793269a9] Cancel signal (to close connection)
+variantum-backend  | 2026-05-25T14:42:10.545Z ERROR 7 --- [variantum-backend] [or-http-epoll-2] r.variantum.service.llm.GigaChatClient   : GigaChat vision [GigaChat-2-Pro] ╨╛╤И╨╕╨▒╨║╨░: LlmFailureException - GigaChat HTTP 402: {"status":402,"message":"Payment Required"}
+variantum-backend  | 
+variantum-backend  | 2026-05-25T14:42:10.546Z  WARN 7 --- [variantum-backend] [nio-8080-exec-2] ru.variantum.controller.FileController   : Vision ╨╜╨╡ ╤Б╤А╨░╨▒╨╛╤В╨░╨╗ ╨┤╨╗╤П phpsosbAQ_Kontrolnaya-rabota-po-geometrii-podobie-treugolnikov_html_d5835262b869a306.png, ╤Д╨╛╨╗╨▒╤Н╨║ ╨╜╨░ Tesseract: GigaChat HTTP 402: {"status":402,"message":"Payment Required"}
+variantum-backend  | 
+variantum-backend  | Warning: Invalid resolution 0 dpi. Using 70 instead.
+variantum-backend  | 2026-05-25T14:42:11.397Z  INFO 7 --- [variantum-backend] [nio-8080-exec-2] r.variantum.service.llm.GigaChatClient   : GigaChat: completion [GigaChat], ╨┐╤А╨╛╨╝╨┐╤В 1633 ╤Б╨╕╨╝╨▓╨╛╨╗╨╛╨▓
+variantum-backend  | 2026-05-25T14:42:11.397Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-2] r.variantum.service.llm.GigaChatClient   : GigaChat: ╨╕╤Б╨┐╨╛╨╗╤М╨╖╤Г╨╡╨╝ ╨║╤Н╤И╨╕╤А╨╛╨▓╨░╨╜╨╜╤Л╨╣ ╤В╨╛╨║╨╡╨╜, ╨┤╨╡╨╣╤Б╤В╨▓╨╕╤В╨╡╨╗╨╡╨╜ ╨┤╨╛ 2026-05-25T15:11:04.530Z
+variantum-backend  | 2026-05-25T14:42:11.399Z  INFO 7 --- [variantum-backend] [nio-8080-exec-2] r.variantum.service.llm.GigaChatClient   : GigaChat: ╨╛╤В╨┐╤А╨░╨▓╨╗╤П╨╡╨╝ ╨╖╨░╨┐╤А╨╛╤Б [GigaChat] ╨║ https://gigachat.devices.sberbank.ru/api/v1
+variantum-backend  | 2026-05-25T14:42:11.400Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-2] o.s.w.r.f.client.ExchangeFunctions       : [1dd3a9e4] HTTP POST https://gigachat.devices.sberbank.ru/api/v1/chat/completions
+variantum-backend  | 2026-05-25T14:42:11.401Z DEBUG 7 --- [variantum-backend] [or-http-epoll-2] org.springframework.web.HttpLogging      : [1dd3a9e4] Encoding [CompletionRequest[model=GigaChat, messages=[Message[role=user, content=╨в╤Л тАФ ╨║╨╛╤А╤А╨╡╨║╤В╨╛╤А. ╨Э╨╕╨╢╨╡ тАФ ╤В╨╡╨║╤Б╤В  (truncated)...]
+variantum-backend  | 2026-05-25T14:42:16.047Z DEBUG 7 --- [variantum-backend] [or-http-epoll-2] o.s.w.r.f.client.ExchangeFunctions       : [1dd3a9e4] [bd4dd420-3] Response 200 OK
+variantum-backend  | 2026-05-25T14:42:16.049Z DEBUG 7 --- [variantum-backend] [or-http-epoll-2] org.springframework.web.HttpLogging      : [1dd3a9e4] [bd4dd420-3] Decoded "{"choices":[{"message":{"content":"## ╨Т╨Р╨а╨Ш╨Р╨Э╨в 1\n\n**╨Р**\n\n╨Э╨░ ╤А╨╕╤Б╤Г╨╜╨║╨╡ ╨╕╨╖╨╛╨▒╤А╨░╨╢╨╡╨╜╤Л ╨┐╤А╤П╨╝╨╛╤Г╨│╨╛╨╗╤М╨╜╤Л╨╡ ╤В╤А╨╡╤Г (truncated)..."
+variantum-backend  | 2026-05-25T14:42:16.049Z  INFO 7 --- [variantum-backend] [or-http-epoll-2] r.variantum.service.llm.GigaChatClient   : GigaChat completion ╨╛╤В╨▓╨╡╤В: HTTP 200 ╤В╨╡╨╗╨╛(1117 ╤Б╨╕╨╝╨▓╨╛╨╗╨╛╨▓): {"choices":[{"message":{"content":"## ╨Т╨Р╨а╨Ш╨Р╨Э╨в 1\n\n**╨Р**\n\n╨Э╨░ ╤А╨╕╤Б╤Г╨╜╨║╨╡ ╨╕╨╖╨╛╨▒╤А╨░╨╢╨╡╨╜╤Л ╨┐╤А╤П╨╝╨╛╤Г╨│╨╛╨╗╤М╨╜╤Л╨╡ ╤В╤А╨╡╤Г╨│╨╛╨╗╤М╨╜╨╕╨║╨╕ ╤Б ╨┐╤А╤П╨╝╤Л╨╝╨╕ ╤Г╨│╨╗╨░╨╝╨╕ $C$ ╨╕ $K$.  \n╨Э╨░╨╣╨┤╨╕╤В╨╡ ╨┐╨╛╨┤╨╛╨▒╨╜╤Л╨╡ ╤В╤А╨╡╤Г╨│╨╛╨╗╤М╨╜╨╕╨║╨╕ ╨╕ ╨┤╨╛╨║╨░╨╢╨╕╤В╨╡ ╨╕╤Е ╨┐╨╛╨┤╨╛╨▒╨╕╨╡.  \n\n$$\n\\text{╨а╨╕╤Б╤Г╨╜╨╛╨║: } \\triangle ABC, \\triangle KLM\n$$\n\n## ╨Т╨Р╨а╨Ш╨Р╨Э╨в 2\n\n**╨Т**\n\n╨Э╨░ ╤А╨╕╤Б╤Г╨╜╨║╨╡ ╨╕╨╖╨╛╨▒╤А╨░
+variantum-backend  | 2026-05-25T14:42:16.059Z  INFO 7 --- [variantum-backend] [or-http-epoll-2] r.variantum.service.llm.GigaChatClient   : GigaChat: ╨┐╨╛╨╗╤Г╤З╨╡╨╜ ╨║╨╛╨╜╤В╨╡╨╜╤В 799 ╤Б╨╕╨╝╨▓╨╛╨╗╨╛╨▓
+variantum-backend  | 2026-05-25T14:42:16.059Z  INFO 7 --- [variantum-backend] [nio-8080-exec-2] r.v.service.llm.TextCleanupService       : ╨в╨╡╨║╤Б╤В ╨╛╤З╨╕╤Й╨╡╨╜: 607 тЖТ 799 ╤Б╨╕╨╝╨▓╨╛╨╗╨╛╨▓
+variantum-backend  | 2026-05-25T14:42:16.092Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-2] org.hibernate.SQL                        : 
+variantum-backend  |     insert 
+variantum-backend  |     into
+variantum-backend  |         uploaded_files
+variantum-backend  |         (created_at, filename, mime_type, parsed_text, parser_used, size_bytes, storage_key, user_id, id) 
+variantum-backend  |     values
+variantum-backend  |         (?, ?, ?, ?, ?, ?, ?, ?, ?)
+variantum-backend  | Hibernate: 
+variantum-backend  |     insert 
+variantum-backend  |     into
+variantum-backend  |         uploaded_files
+variantum-backend  |         (created_at, filename, mime_type, parsed_text, parser_used, size_bytes, storage_key, user_id, id) 
+variantum-backend  |     values
+variantum-backend  |         (?, ?, ?, ?, ?, ?, ?, ?, ?)
+variantum-backend  | 2026-05-25T14:42:16.104Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+variantum-backend  | 2026-05-25T14:42:16.107Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [FileUploadResponse[fileId=6da62b51-33ae-41e7-ba24-aa1e205d78d4, fileName=phpsosbAQ_Kontrolnaya-rabot (truncated)...]
+variantum-backend  | 2026-05-25T14:42:16.109Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+variantum-backend  | 2026-05-25T14:42:29.863Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-3] o.s.web.servlet.DispatcherServlet        : POST "/api/projects", parameters={}
+variantum-backend  | 2026-05-25T14:42:29.863Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-3] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to ru.variantum.controller.ProjectController#create(CreateProjectRequest)
+variantum-backend  | 2026-05-25T14:42:29.892Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-3] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [CreateProjectRequest[mode=FROM_REFERENCE, criteria=null, referenceText=## ╨Т╨Р╨а╨Ш╨Р╨Э╨в 1<EOL><EOL>**╨Р**<EOL><EOL>╨Э╨░ ╤А╨╕╤Б╤Г╨╜ (truncated)...]
+variantum-backend  | 2026-05-25T14:42:29.945Z  INFO 7 --- [variantum-backend] [nio-8080-exec-3] r.v.s.llm.GenerateFromReferenceService   : ╨У╨╡╨╜╨╡╤А╨░╤Ж╨╕╤П ╨┐╨╛ ╤Н╤В╨░╨╗╨╛╨╜╤Г: 4 ╨▓╨░╤А.
+variantum-backend  | 2026-05-25T14:42:29.949Z  INFO 7 --- [variantum-backend] [nio-8080-exec-3] r.variantum.service.llm.GigaChatClient   : GigaChat: completion [GigaChat-2-Pro], ╨┐╤А╨╛╨╝╨┐╤В 7373 ╤Б╨╕╨╝╨▓╨╛╨╗╨╛╨▓
+variantum-backend  | 2026-05-25T14:42:29.949Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-3] r.variantum.service.llm.GigaChatClient   : GigaChat: ╨╕╤Б╨┐╨╛╨╗╤М╨╖╤Г╨╡╨╝ ╨║╤Н╤И╨╕╤А╨╛╨▓╨░╨╜╨╜╤Л╨╣ ╤В╨╛╨║╨╡╨╜, ╨┤╨╡╨╣╤Б╤В╨▓╨╕╤В╨╡╨╗╨╡╨╜ ╨┤╨╛ 2026-05-25T15:11:04.530Z
+variantum-backend  | 2026-05-25T14:42:29.951Z  INFO 7 --- [variantum-backend] [nio-8080-exec-3] r.variantum.service.llm.GigaChatClient   : GigaChat: ╨╛╤В╨┐╤А╨░╨▓╨╗╤П╨╡╨╝ ╨╖╨░╨┐╤А╨╛╤Б [GigaChat-2-Pro] ╨║ https://gigachat.devices.sberbank.ru/api/v1
+variantum-backend  | 2026-05-25T14:42:29.952Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-3] o.s.w.r.f.client.ExchangeFunctions       : [7d676b5a] HTTP POST https://gigachat.devices.sberbank.ru/api/v1/chat/completions
+variantum-backend  | 2026-05-25T14:42:29.953Z DEBUG 7 --- [variantum-backend] [or-http-epoll-2] org.springframework.web.HttpLogging      : [7d676b5a] Encoding [CompletionRequest[model=GigaChat-2-Pro, messages=[Message[role=user, content=╨в╤Л тАФ ╨╝╨╡╤В╨╛╨┤╨╕╤Б╤В ╤А╨╛╤Б╤Б╨╕╨╣╤Б╨║╨╛ (truncated)...]
+variantum-backend  | 2026-05-25T14:42:35.520Z DEBUG 7 --- [variantum-backend] [or-http-epoll-2] o.s.w.r.f.client.ExchangeFunctions       : [7d676b5a] [bd4dd420-4] Response 402 PAYMENT_REQUIRED
+variantum-backend  | 2026-05-25T14:42:35.521Z DEBUG 7 --- [variantum-backend] [or-http-epoll-2] org.springframework.web.HttpLogging      : [7d676b5a] [bd4dd420-4] Decoded "{"status":402,"message":"Payment Required"}<EOL>"
+variantum-backend  | 2026-05-25T14:42:35.521Z  INFO 7 --- [variantum-backend] [or-http-epoll-2] r.variantum.service.llm.GigaChatClient   : GigaChat completion ╨╛╤В╨▓╨╡╤В: HTTP 402 ╤В╨╡╨╗╨╛(44 ╤Б╨╕╨╝╨▓╨╛╨╗╨╛╨▓): {"status":402,"message":"Payment Required"}тЖ╡
+variantum-backend  | 2026-05-25T14:42:35.522Z DEBUG 7 --- [variantum-backend] [or-http-epoll-2] o.s.w.r.f.client.ExchangeFunctions       : [7d676b5a] Cancel signal (to close connection)
+variantum-backend  | 2026-05-25T14:42:35.522Z ERROR 7 --- [variantum-backend] [or-http-epoll-2] r.variantum.service.llm.GigaChatClient   : GigaChat completion [GigaChat-2-Pro] ╨╕╤В╨╛╨│╨╛╨▓╨░╤П ╨╛╤И╨╕╨▒╨║╨░: LlmFailureException - GigaChat HTTP 402: {"status":402,"message":"Payment Required"}
+variantum-backend  | 
+variantum-backend  | 2026-05-25T14:42:35.522Z  WARN 7 --- [variantum-backend] [or-http-epoll-2] r.variantum.service.llm.GigaChatClient   : GigaChat GigaChat-2-Pro тЖТ 402 (╨║╨▓╨╛╤В╨░ ╨╕╤Б╤З╨╡╤А╨┐╨░╨╜╨░), ╤Д╨╛╨╗╨▒╤Н╨║ ╨╜╨░ GigaChat
+variantum-backend  | 2026-05-25T14:42:35.523Z  INFO 7 --- [variantum-backend] [or-http-epoll-2] r.variantum.service.llm.GigaChatClient   : GigaChat: completion [GigaChat], ╨┐╤А╨╛╨╝╨┐╤В 7373 ╤Б╨╕╨╝╨▓╨╛╨╗╨╛╨▓
+variantum-backend  | 2026-05-25T14:42:35.523Z DEBUG 7 --- [variantum-backend] [or-http-epoll-2] r.variantum.service.llm.GigaChatClient   : GigaChat: ╨╕╤Б╨┐╨╛╨╗╤М╨╖╤Г╨╡╨╝ ╨║╤Н╤И╨╕╤А╨╛╨▓╨░╨╜╨╜╤Л╨╣ ╤В╨╛╨║╨╡╨╜, ╨┤╨╡╨╣╤Б╤В╨▓╨╕╤В╨╡╨╗╨╡╨╜ ╨┤╨╛ 2026-05-25T15:11:04.530Z
+variantum-backend  | 2026-05-25T14:42:35.523Z  INFO 7 --- [variantum-backend] [or-http-epoll-2] r.variantum.service.llm.GigaChatClient   : GigaChat: ╨╛╤В╨┐╤А╨░╨▓╨╗╤П╨╡╨╝ ╨╖╨░╨┐╤А╨╛╤Б [GigaChat] ╨║ https://gigachat.devices.sberbank.ru/api/v1
+variantum-backend  | 2026-05-25T14:42:35.524Z DEBUG 7 --- [variantum-backend] [or-http-epoll-2] o.s.w.r.f.client.ExchangeFunctions       : [681b0be2] HTTP POST https://gigachat.devices.sberbank.ru/api/v1/chat/completions
+variantum-backend  | 2026-05-25T14:42:36.344Z DEBUG 7 --- [variantum-backend] [or-http-epoll-2] org.springframework.web.HttpLogging      : [681b0be2] Encoding [CompletionRequest[model=GigaChat, messages=[Message[role=user, content=╨в╤Л тАФ ╨╝╨╡╤В╨╛╨┤╨╕╤Б╤В ╤А╨╛╤Б╤Б╨╕╨╣╤Б╨║╨╛╨╣ ╤И╨║╨╛╨╗ (truncated)...]
+variantum-backend  | 2026-05-25T14:42:46.174Z DEBUG 7 --- [variantum-backend] [or-http-epoll-2] o.s.w.r.f.client.ExchangeFunctions       : [681b0be2] [0169f096-1] Response 200 OK
+variantum-backend  | 2026-05-25T14:42:46.181Z DEBUG 7 --- [variantum-backend] [or-http-epoll-2] org.springframework.web.HttpLogging      : [681b0be2] [0169f096-1] Decoded "{"choices":[{"message":{"content":"╨Т╨╛╤В ╨║╨╛╨╝╨┐╨╗╨╡╨║╤В ╤А╨░╨▓╨╜╨╛╤Ж╨╡╨╜╨╜╤Л╤Е ╨▓╨░╤А╨╕╨░╨╜╤В╨╛╨▓ ╨┤╨╗╤П ╨╖╨░╨┤╨░╨╜╨╕╤П, ╤Б╨╛╨╛╤В╨▓╨╡╤В╤Б╤В╨▓╤Г╤О╤Й╨╡╨│╨╛  (truncated)..."
+variantum-backend  | 2026-05-25T14:42:46.181Z  INFO 7 --- [variantum-backend] [or-http-epoll-2] r.variantum.service.llm.GigaChatClient   : GigaChat completion ╨╛╤В╨▓╨╡╤В: HTTP 200 ╤В╨╡╨╗╨╛(4883 ╤Б╨╕╨╝╨▓╨╛╨╗╨╛╨▓): {"choices":[{"message":{"content":"╨Т╨╛╤В ╨║╨╛╨╝╨┐╨╗╨╡╨║╤В ╤А╨░╨▓╨╜╨╛╤Ж╨╡╨╜╨╜╤Л╤Е ╨▓╨░╤А╨╕╨░╨╜╤В╨╛╨▓ ╨┤╨╗╤П ╨╖╨░╨┤╨░╨╜╨╕╤П, ╤Б╨╛╨╛╤В╨▓╨╡╤В╤Б╤В╨▓╤Г╤О╤Й╨╡╨│╨╛ ╤Г╨║╨░╨╖╨░╨╜╨╜╤Л╨╝ ╨║╤А╨╕╤В╨╡╤А╨╕╤П╨╝:\n\n{\n  \"variants\": [\n    {\n      // ╨Т╨░╤А╨╕╨░╨╜╤В 1\n      \"index\": 1,\n      \"difficulty\": 3,\n      \"totalEstimatedMinutes\": 12,\n      \"tasks\": [\n        {\n          \
+variantum-backend  | 2026-05-25T14:42:46.182Z  INFO 7 --- [variantum-backend] [or-http-epoll-2] r.variantum.service.llm.GigaChatClient   : GigaChat: ╨┐╨╛╨╗╤Г╤З╨╡╨╜ ╨║╨╛╨╜╤В╨╡╨╜╤В 4114 ╤Б╨╕╨╝╨▓╨╛╨╗╨╛╨▓
+variantum-backend  | 2026-05-25T14:42:46.194Z ERROR 7 --- [variantum-backend] [nio-8080-exec-3] ru.variantum.service.llm.LlmJsonUtil     : ╨Э╨╡ ╤Г╨┤╨░╨╗╨╛╤Б╤М ╤А╨░╨╖╨╛╨▒╤А╨░╤В╤М JSON ╨╛╤В LLM (╨┤╨░╨╢╨╡ ╨┐╨╛╤Б╨╗╨╡ ╨┐╨╛╤З╨╕╨╜╨║╨╕): {
+variantum-backend  |   "variants": [
+variantum-backend  |     {
+variantum-backend  |       // ╨Т╨░╤А╨╕╨░╨╜╤В 1
+variantum-backend  |       "index": 1,
+variantum-backend  |       "difficulty": 3,
+variantum-backend  |       "totalEstimatedMinutes": 12,
+variantum-backend  |       "tasks": [
+variantum-backend  |         {
+variantum-backend  |           "index": 1,
+variantum-backend  |           "text": "╨Э╨░ ╤А╨╕╤Б╤Г╨╜╨║╨╡ ╨╕╨╖╨╛╨▒╤А╨░╨╢╨╡╨╜╤Л ╨┤╨▓╨░ ╨┐╤А╤П╨╝╨╛╤Г╨│╨╛╨╗╤М╨╜╤Л╤Е ╤В╤А╨╡╤Г╨│╨╛╨╗╤М╨╜╨╕╨║╨░ $ABC$ ╨╕ $PQR$ ╤Б ╨┐╤А╤П╨╝╤Л╨╝╨╕ ╤Г╨│╨╗╨░╨╝╨╕ ╨▓ ╤В╨╛╤З╨║╨░╤Е $C$ ╨╕ $R$ ╤Б╨╛╨╛╤В╨▓╨╡╤В╤Б╤В╨▓╨╡╨╜╨╜╨╛. ╨Ф╨╛╨║╨░╨╢╨╕╤В╨╡, ╤З╤В╨╛ ╤В╤А╨╡╤Г╨│╨╛╨╗╤М╨╜╨╕╨║╨╕ $ABC$ ╨╕ $PQR$ ╨┐╨╛╨┤╨╛╨▒╨╜╤Л."
+variantum-backend  |           "answer": "╨Я╨╛╨┤╨╛╨▒╨╕╨╡ ╤В╤А╨╡╤Г╨│╨╛╨╗╤М╨╜╨╕╨║╨╛╨▓ ╨┤╨╛╨║╨░╨╖╨░╨╜╨╛ ╤З╨╡╤А╨╡╨╖ ╤А╨░╨▓╨╡╨╜╤Б╤В╨▓╨╛ ╤Г╨│╨╗╨╛╨▓, $тИаA=тИаP$, $тИаB=тИаQ$, $тИаC=тИаR$.",
+variantum-backend  |           "steps": 2,
+variantum-backend  |           "estima
+variantum-backend  | 2026-05-25T14:42:46.195Z ERROR 7 --- [variantum-backend] [nio-8080-exec-3] r.v.service.project.ProjectService       : ╨Ю╤И╨╕╨▒╨║╨░ ╨│╨╡╨╜╨╡╤А╨░╤Ж╨╕╨╕ ╨┐╤А╨╛╨╡╨║╤В╨░ 7f8a8aa6-d60a-4596-84d5-cb926a225113: LLM ╨▓╨╡╤А╨╜╤Г╨╗ ╨╜╨╡╨▓╨░╨╗╨╕╨┤╨╜╤Л╨╣ JSON: Unexpected character ('/' (code 47)): maybe a (non-standard) comment? (not recognized as one since Feature 'ALLOW_COMMENTS' not enabled for parser)
+variantum-backend  |  at [Source: (String)"{
+variantum-backend  |   "variants": [
+variantum-backend  |     {
+variantum-backend  |       // ╨Т╨░╤А╨╕╨░╨╜╤В 1
+variantum-backend  |       "index": 1,
+variantum-backend  |       "difficulty": 3,
+variantum-backend  |       "totalEstimatedMinutes": 12,
+variantum-backend  |       "tasks": [
+variantum-backend  |         {
+variantum-backend  |           "index": 1,
+variantum-backend  |           "text": "╨Э╨░ ╤А╨╕╤Б╤Г╨╜╨║╨╡ ╨╕╨╖╨╛╨▒╤А╨░╨╢╨╡╨╜╤Л ╨┤╨▓╨░ ╨┐╤А╤П╨╝╨╛╤Г╨│╨╛╨╗╤М╨╜╤Л╤Е ╤В╤А╨╡╤Г╨│╨╛╨╗╤М╨╜╨╕╨║╨░ $ABC$ ╨╕ $PQR$ ╤Б ╨┐╤А╤П╨╝╤Л╨╝╨╕ ╤Г╨│╨╗╨░╨╝╨╕ ╨▓ ╤В╨╛╤З╨║╨░╤Е $C$ ╨╕ $R$ ╤Б╨╛╨╛╤В╨▓╨╡╤В╤Б╤В╨▓╨╡╨╜╨╜╨╛. ╨Ф╨╛╨║╨░╨╢╨╕╤В╨╡, ╤З╤В╨╛ ╤В╤А╨╡╤Г╨│╨╛╨╗╤М╨╜╨╕╨║╨╕ $ABC$ ╨╕ $PQR$ ╨┐╨╛╨┤╨╛╨▒╨╜╤Л."
+variantum-backend  |           "answer": "╨Я╨╛╨┤╨╛╨▒╨╕╨╡ ╤В╤А╨╡╤Г╨│╨╛╨╗╤М╨╜╨╕╨║╨╛╨▓ ╨┤╨╛╨║╨░╨╖╨░╨╜╨╛ ╤З╨╡╤А╨╡╨╖ ╤А╨░╨▓╨╡╨╜╤Б╤В╨▓╨╛ ╤Г╨│╨╗╨╛╨▓, $тИаA=тИаP$, $тИаB=тИаQ$, $тИаC=тИаR$.",
+variantum-backend  |           "steps": 2,
+variantum-backend  |           "estima"[truncated 3527 chars]; line: 4, column: 8] (through reference chain: ru.variantum.service.llm.GeneratedModels$GeneratedSet["variants"]->java.util.ArrayList[0])
+variantum-backend  | 
+variantum-backend  | ru.variantum.exception.LlmFailureException: LLM ╨▓╨╡╤А╨╜╤Г╨╗ ╨╜╨╡╨▓╨░╨╗╨╕╨┤╨╜╤Л╨╣ JSON: Unexpected character ('/' (code 47)): maybe a (non-standard) comment? (not recognized as one since Feature 'ALLOW_COMMENTS' not enabled for parser)
+variantum-backend  |  at [Source: (String)"{
+variantum-backend  |   "variants": [
+variantum-backend  |     {
+variantum-backend  |       // ╨Т╨░╤А╨╕╨░╨╜╤В 1
+variantum-backend  |       "index": 1,
+variantum-backend  |       "difficulty": 3,
+variantum-backend  |       "totalEstimatedMinutes": 12,
+variantum-backend  |       "tasks": [
+variantum-backend  |         {
+variantum-backend  |           "index": 1,
+variantum-backend  |           "text": "╨Э╨░ ╤А╨╕╤Б╤Г╨╜╨║╨╡ ╨╕╨╖╨╛╨▒╤А╨░╨╢╨╡╨╜╤Л ╨┤╨▓╨░ ╨┐╤А╤П╨╝╨╛╤Г╨│╨╛╨╗╤М╨╜╤Л╤Е ╤В╤А╨╡╤Г╨│╨╛╨╗╤М╨╜╨╕╨║╨░ $ABC$ ╨╕ $PQR$ ╤Б ╨┐╤А╤П╨╝╤Л╨╝╨╕ ╤Г╨│╨╗╨░╨╝╨╕ ╨▓ ╤В╨╛╤З╨║╨░╤Е $C$ ╨╕ $R$ ╤Б╨╛╨╛╤В╨▓╨╡╤В╤Б╤В╨▓╨╡╨╜╨╜╨╛. ╨Ф╨╛╨║╨░╨╢╨╕╤В╨╡, ╤З╤В╨╛ ╤В╤А╨╡╤Г╨│╨╛╨╗╤М╨╜╨╕╨║╨╕ $ABC$ ╨╕ $PQR$ ╨┐╨╛╨┤╨╛╨▒╨╜╤Л."
+variantum-backend  |           "answer": "╨Я╨╛╨┤╨╛╨▒╨╕╨╡ ╤В╤А╨╡╤Г╨│╨╛╨╗╤М╨╜╨╕╨║╨╛╨▓ ╨┤╨╛╨║╨░╨╖╨░╨╜╨╛ ╤З╨╡╤А╨╡╨╖ ╤А╨░╨▓╨╡╨╜╤Б╤В╨▓╨╛ ╤Г╨│╨╗╨╛╨▓, $тИаA=тИаP$, $тИаB=тИаQ$, $тИаC=тИаR$.",
+variantum-backend  |           "steps": 2,
+variantum-backend  |           "estima"[truncated 3527 chars]; line: 4, column: 8] (through reference chain: ru.variantum.service.llm.GeneratedModels$GeneratedSet["variants"]->java.util.ArrayList[0])
+variantum-backend  | 	at ru.variantum.service.llm.LlmJsonUtil.parse(LlmJsonUtil.java:32) ~[!/:0.1.0-SNAPSHOT]
+variantum-backend  | 	at ru.variantum.service.llm.GenerateFromReferenceService.generate(GenerateFromReferenceService.java:75) ~[!/:0.1.0-SNAPSHOT]
+variantum-backend  | 	at ru.variantum.service.project.ProjectService.create(ProjectService.java:51) ~[!/:0.1.0-SNAPSHOT]
+variantum-backend  | 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(Unknown Source) ~[na:na]
+variantum-backend  | 	at java.base/java.lang.reflect.Method.invoke(Unknown Source) ~[na:na]
+variantum-backend  | 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:354) ~[spring-aop-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196) ~[spring-aop-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:768) ~[spring-aop-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.springframework.transaction.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:123) ~[spring-tx-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:392) ~[spring-tx-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119) ~[spring-tx-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:768) ~[spring-aop-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:720) ~[spring-aop-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at ru.variantum.service.project.ProjectService$$SpringCGLIB$$0.create(<generated>) ~[!/:0.1.0-SNAPSHOT]
+variantum-backend  | 	at ru.variantum.controller.ProjectController.create(ProjectController.java:28) ~[!/:0.1.0-SNAPSHOT]
+variantum-backend  | 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(Unknown Source) ~[na:na]
+variantum-backend  | 	at java.base/java.lang.reflect.Method.invoke(Unknown Source) ~[na:na]
+variantum-backend  | 	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:255) ~[spring-web-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:188) ~[spring-web-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:926) ~[spring-webmvc-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:831) ~[spring-webmvc-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089) ~[spring-webmvc-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979) ~[spring-webmvc-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014) ~[spring-webmvc-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914) ~[spring-webmvc-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590) ~[tomcat-embed-core-10.1.20.jar!/:na]
+variantum-backend  | 	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) ~[spring-webmvc-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) ~[tomcat-embed-core-10.1.20.jar!/:na]
+variantum-backend  | 	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:206) ~[tomcat-embed-core-10.1.20.jar!/:na]
+variantum-backend  | 	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:150) ~[tomcat-embed-core-10.1.20.jar!/:na]
+variantum-backend  | 	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-embed-websocket-10.1.20.jar!/:na]
+variantum-backend  | 	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:175) ~[tomcat-embed-core-10.1.20.jar!/:na]
+variantum-backend  | 	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:150) ~[tomcat-embed-core-10.1.20.jar!/:na]
+variantum-backend  | 	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:110) ~[spring-web-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:175) ~[tomcat-embed-core-10.1.20.jar!/:na]
+variantum-backend  | 	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:150) ~[tomcat-embed-core-10.1.20.jar!/:na]
+variantum-backend  | 	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108) ~[spring-web-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:231) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$FilterObservation$SimpleFilterObservation.lambda$wrap$1(ObservationFilterChainDecorator.java:479) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$AroundFilterObservation$SimpleAroundFilterObservation.lambda$wrap$1(ObservationFilterChainDecorator.java:340) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator.lambda$wrapSecured$0(ObservationFilterChainDecorator.java:82) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:128) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:100) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:126) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:120) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:131) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:85) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:179) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at ru.variantum.security.JwtAuthenticationFilter.doFilterInternal(JwtAuthenticationFilter.java:63) ~[!/:0.1.0-SNAPSHOT]
+variantum-backend  | 	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:93) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91) ~[spring-web-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$AroundFilterObservation$SimpleAroundFilterObservation.lambda$wrap$0(ObservationFilterChainDecorator.java:323) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:224) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:233) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191) ~[spring-security-web-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) ~[spring-web-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.springframework.web.servlet.handler.HandlerMappingIntrospector.lambda$createCacheFilter$3(HandlerMappingIntrospector.java:195) ~[spring-webmvc-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) ~[spring-web-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74) ~[spring-web-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.springframework.security.config.annotation.web.configuration.WebMvcSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebMvcSecurityConfiguration.java:230) ~[spring-security-config-6.2.4.jar!/:6.2.4]
+variantum-backend  | 	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:352) ~[spring-web-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:268) ~[spring-web-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:175) ~[tomcat-embed-core-10.1.20.jar!/:na]
+variantum-backend  | 	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:150) ~[tomcat-embed-core-10.1.20.jar!/:na]
+variantum-backend  | 	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:175) ~[tomcat-embed-core-10.1.20.jar!/:na]
+variantum-backend  | 	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:150) ~[tomcat-embed-core-10.1.20.jar!/:na]
+variantum-backend  | 	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:175) ~[tomcat-embed-core-10.1.20.jar!/:na]
+variantum-backend  | 	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:150) ~[tomcat-embed-core-10.1.20.jar!/:na]
+variantum-backend  | 	at org.springframework.web.filter.ServerHttpObservationFilter.doFilterInternal(ServerHttpObservationFilter.java:109) ~[spring-web-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:175) ~[tomcat-embed-core-10.1.20.jar!/:na]
+variantum-backend  | 	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:150) ~[tomcat-embed-core-10.1.20.jar!/:na]
+variantum-backend  | 	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.6.jar!/:6.1.6]
+variantum-backend  | 	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:175) ~[tomcat-embed-core-10.1.20.jar!/:na]
+variantum-backend  | 	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:150) ~[tomcat-embed-core-10.1.20.jar!/:na]
+variantum-backend  | 	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167) ~[tomcat-embed-core-10.1.20.jar!/:na]
+variantum-backend  | 	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90) ~[tomcat-embed-core-10.1.20.jar!/:na]
+variantum-backend  | 	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482) ~[tomcat-embed-core-10.1.20.jar!/:na]
+variantum-backend  | 	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115) ~[tomcat-embed-core-10.1.20.jar!/:na]
+variantum-backend  | 	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93) ~[tomcat-embed-core-10.1.20.jar!/:na]
+variantum-backend  | 	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) ~[tomcat-embed-core-10.1.20.jar!/:na]
+variantum-backend  | 	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344) ~[tomcat-embed-core-10.1.20.jar!/:na]
+variantum-backend  | 	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:391) ~[tomcat-embed-core-10.1.20.jar!/:na]
+variantum-backend  | 	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.20.jar!/:na]
+variantum-backend  | 	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:896) ~[tomcat-embed-core-10.1.20.jar!/:na]
+variantum-backend  | 	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1736) ~[tomcat-embed-core-10.1.20.jar!/:na]
+variantum-backend  | 	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.20.jar!/:na]
+variantum-backend  | 	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191) ~[tomcat-embed-core-10.1.20.jar!/:na]
+variantum-backend  | 	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) ~[tomcat-embed-core-10.1.20.jar!/:na]
+variantum-backend  | 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.20.jar!/:na]
+variantum-backend  | 	at java.base/java.lang.Thread.run(Unknown Source) ~[na:na]
+variantum-backend  | 
+variantum-backend  | 2026-05-25T14:42:46.210Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-3] org.hibernate.SQL                        : 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | Hibernate: 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | 2026-05-25T14:42:46.215Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-3] org.hibernate.SQL                        : 
+variantum-backend  |     select
+variantum-backend  |         r1_0.id,
+variantum-backend  |         r1_0.created_at,
+variantum-backend  |         r1_0.dismissed,
+variantum-backend  |         r1_0.message,
+variantum-backend  |         r1_0.project_id,
+variantum-backend  |         r1_0.severity,
+variantum-backend  |         r1_0.type,
+variantum-backend  |         r1_0.variant_index 
+variantum-backend  |     from
+variantum-backend  |         recommendations r1_0 
+variantum-backend  |     where
+variantum-backend  |         r1_0.project_id=? 
+variantum-backend  |         and not(r1_0.dismissed)
+variantum-backend  | Hibernate: 
+variantum-backend  |     select
+variantum-backend  |         r1_0.id,
+variantum-backend  |         r1_0.created_at,
+variantum-backend  |         r1_0.dismissed,
+variantum-backend  |         r1_0.message,
+variantum-backend  |         r1_0.project_id,
+variantum-backend  |         r1_0.severity,
+variantum-backend  |         r1_0.type,
+variantum-backend  |         r1_0.variant_index 
+variantum-backend  |     from
+variantum-backend  |         recommendations r1_0 
+variantum-backend  |     where
+variantum-backend  |         r1_0.project_id=? 
+variantum-backend  |         and not(r1_0.dismissed)
+variantum-backend  | 2026-05-25T14:42:46.219Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-3] org.hibernate.SQL                        : 
+variantum-backend  |     insert 
+variantum-backend  |     into
+variantum-backend  |         projects
+variantum-backend  |         (created_at, custom_prompt, deleted_at, difficulty_gradation, grade, mode, params_json, reference_file_id, reference_text, status, subject, target_difficulty, task_type, title, topic, updated_at, user_id, id) 
+variantum-backend  |     values
+variantum-backend  |         (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+variantum-backend  | Hibernate: 
+variantum-backend  |     insert 
+variantum-backend  |     into
+variantum-backend  |         projects
+variantum-backend  |         (created_at, custom_prompt, deleted_at, difficulty_gradation, grade, mode, params_json, reference_file_id, reference_text, status, subject, target_difficulty, task_type, title, topic, updated_at, user_id, id) 
+variantum-backend  |     values
+variantum-backend  |         (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+variantum-backend  | 2026-05-25T14:42:46.233Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-3] org.hibernate.SQL                        : 
+variantum-backend  |     update
+variantum-backend  |         projects 
+variantum-backend  |     set
+variantum-backend  |         custom_prompt=?,
+variantum-backend  |         deleted_at=?,
+variantum-backend  |         difficulty_gradation=?,
+variantum-backend  |         grade=?,
+variantum-backend  |         mode=?,
+variantum-backend  |         params_json=?,
+variantum-backend  |         reference_file_id=?,
+variantum-backend  |         reference_text=?,
+variantum-backend  |         status=?,
+variantum-backend  |         subject=?,
+variantum-backend  |         target_difficulty=?,
+variantum-backend  |         task_type=?,
+variantum-backend  |         title=?,
+variantum-backend  |         topic=?,
+variantum-backend  |         updated_at=?,
+variantum-backend  |         user_id=? 
+variantum-backend  |     where
+variantum-backend  |         id=?
+variantum-backend  | Hibernate: 
+variantum-backend  |     update
+variantum-backend  |         projects 
+variantum-backend  |     set
+variantum-backend  |         custom_prompt=?,
+variantum-backend  |         deleted_at=?,
+variantum-backend  |         difficulty_gradation=?,
+variantum-backend  |         grade=?,
+variantum-backend  |         mode=?,
+variantum-backend  |         params_json=?,
+variantum-backend  |         reference_file_id=?,
+variantum-backend  |         reference_text=?,
+variantum-backend  |         status=?,
+variantum-backend  |         subject=?,
+variantum-backend  |         target_difficulty=?,
+variantum-backend  |         task_type=?,
+variantum-backend  |         title=?,
+variantum-backend  |         topic=?,
+variantum-backend  |         updated_at=?,
+variantum-backend  |         user_id=? 
+variantum-backend  |     where
+variantum-backend  |         id=?
+variantum-backend  | 2026-05-25T14:42:46.244Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+variantum-backend  | 2026-05-25T14:42:46.251Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [ProjectDetailResponse[projectId=7f8a8aa6-d60a-4596-84d5-cb926a225113, title=╨Т╨░╤А╨╕╨░╨╜╤В╤Л ╨┐╨╛ ╨╝╨░╤В╨╡╨╝╨░╤В╨╕╨║╨╡ 9 (truncated)...]
+variantum-backend  | 2026-05-25T14:42:46.254Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-3] o.s.web.servlet.DispatcherServlet        : Completed 201 CREATED
+variantum-backend  | 2026-05-25T14:42:46.289Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-4] o.s.web.servlet.DispatcherServlet        : GET "/api/projects/7f8a8aa6-d60a-4596-84d5-cb926a225113", parameters={}
+variantum-backend  | 2026-05-25T14:42:46.290Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-4] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to ru.variantum.controller.ProjectController#get(UUID)
+variantum-backend  | 2026-05-25T14:42:46.297Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-4] org.hibernate.SQL                        : 
+variantum-backend  |     select
+variantum-backend  |         p1_0.id,
+variantum-backend  |         p1_0.created_at,
+variantum-backend  |         p1_0.custom_prompt,
+variantum-backend  |         p1_0.deleted_at,
+variantum-backend  |         p1_0.difficulty_gradation,
+variantum-backend  |         p1_0.grade,
+variantum-backend  |         p1_0.mode,
+variantum-backend  |         p1_0.params_json,
+variantum-backend  |         p1_0.reference_file_id,
+variantum-backend  |         p1_0.reference_text,
+variantum-backend  |         p1_0.status,
+variantum-backend  |         p1_0.subject,
+variantum-backend  |         p1_0.target_difficulty,
+variantum-backend  |         p1_0.task_type,
+variantum-backend  |         p1_0.title,
+variantum-backend  |         p1_0.topic,
+variantum-backend  |         p1_0.updated_at,
+variantum-backend  |         p1_0.user_id 
+variantum-backend  |     from
+variantum-backend  |         projects p1_0 
+variantum-backend  |     where
+variantum-backend  |         (
+variantum-backend  |             p1_0.deleted_at IS NULL
+variantum-backend  |         ) 
+variantum-backend  |         and p1_0.id=? 
+variantum-backend  |         and p1_0.user_id=?
+variantum-backend  | Hibernate: 
+variantum-backend  |     select
+variantum-backend  |         p1_0.id,
+variantum-backend  |         p1_0.created_at,
+variantum-backend  |         p1_0.custom_prompt,
+variantum-backend  |         p1_0.deleted_at,
+variantum-backend  |         p1_0.difficulty_gradation,
+variantum-backend  |         p1_0.grade,
+variantum-backend  |         p1_0.mode,
+variantum-backend  |         p1_0.params_json,
+variantum-backend  |         p1_0.reference_file_id,
+variantum-backend  |         p1_0.reference_text,
+variantum-backend  |         p1_0.status,
+variantum-backend  |         p1_0.subject,
+variantum-backend  |         p1_0.target_difficulty,
+variantum-backend  |         p1_0.task_type,
+variantum-backend  |         p1_0.title,
+variantum-backend  |         p1_0.topic,
+variantum-backend  |         p1_0.updated_at,
+variantum-backend  |         p1_0.user_id 
+variantum-backend  |     from
+variantum-backend  |         projects p1_0 
+variantum-backend  |     where
+variantum-backend  |         (
+variantum-backend  |             p1_0.deleted_at IS NULL
+variantum-backend  |         ) 
+variantum-backend  |         and p1_0.id=? 
+variantum-backend  |         and p1_0.user_id=?
+variantum-backend  | 2026-05-25T14:42:46.307Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-4] org.hibernate.SQL                        : 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | Hibernate: 
+variantum-backend  |     select
+variantum-backend  |         v1_0.id,
+variantum-backend  |         v1_0.created_at,
+variantum-backend  |         v1_0.difficulty,
+variantum-backend  |         v1_0.index_in_project,
+variantum-backend  |         v1_0.project_id,
+variantum-backend  |         v1_0.total_estimated_minutes,
+variantum-backend  |         v1_0.updated_at 
+variantum-backend  |     from
+variantum-backend  |         variants v1_0 
+variantum-backend  |     where
+variantum-backend  |         v1_0.project_id=? 
+variantum-backend  |     order by
+variantum-backend  |         v1_0.index_in_project
+variantum-backend  | 2026-05-25T14:42:46.311Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-4] org.hibernate.SQL                        : 
+variantum-backend  |     select
+variantum-backend  |         r1_0.id,
+variantum-backend  |         r1_0.created_at,
+variantum-backend  |         r1_0.dismissed,
+variantum-backend  |         r1_0.message,
+variantum-backend  |         r1_0.project_id,
+variantum-backend  |         r1_0.severity,
+variantum-backend  |         r1_0.type,
+variantum-backend  |         r1_0.variant_index 
+variantum-backend  |     from
+variantum-backend  |         recommendations r1_0 
+variantum-backend  |     where
+variantum-backend  |         r1_0.project_id=? 
+variantum-backend  |         and not(r1_0.dismissed)
+variantum-backend  | Hibernate: 
+variantum-backend  |     select
+variantum-backend  |         r1_0.id,
+variantum-backend  |         r1_0.created_at,
+variantum-backend  |         r1_0.dismissed,
+variantum-backend  |         r1_0.message,
+variantum-backend  |         r1_0.project_id,
+variantum-backend  |         r1_0.severity,
+variantum-backend  |         r1_0.type,
+variantum-backend  |         r1_0.variant_index 
+variantum-backend  |     from
+variantum-backend  |         recommendations r1_0 
+variantum-backend  |     where
+variantum-backend  |         r1_0.project_id=? 
+variantum-backend  |         and not(r1_0.dismissed)
+variantum-backend  | 2026-05-25T14:42:46.314Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-4] m.m.a.RequestResponseBodyMethodProcessor : Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+variantum-backend  | 2026-05-25T14:42:46.314Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-4] m.m.a.RequestResponseBodyMethodProcessor : Writing [ProjectDetailResponse[projectId=7f8a8aa6-d60a-4596-84d5-cb926a225113, title=╨Т╨░╤А╨╕╨░╨╜╤В╤Л ╨┐╨╛ ╨╝╨░╤В╨╡╨╝╨░╤В╨╕╨║╨╡ 9 (truncated)...]
+variantum-backend  | 2026-05-25T14:42:46.315Z DEBUG 7 --- [variantum-backend] [nio-8080-exec-4] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
