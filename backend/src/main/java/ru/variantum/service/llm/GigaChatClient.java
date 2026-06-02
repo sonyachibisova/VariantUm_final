@@ -90,8 +90,7 @@ public class GigaChatClient {
         return getAccessToken()
                 .flatMap(token -> callCompletion(token, prompt, temperature, null, model))
                 .onErrorMap(ex -> wrapNetworkException(ex, "completion [" + model + "]"))
-                // 1 ретрай вместо 3: иначе таймаут (90s) множится в несколько минут зависания.
-                .retryWhen(Retry.backoff(1, Duration.ofSeconds(2))
+                .retryWhen(Retry.backoff(2, Duration.ofSeconds(3))
                         .filter(ex -> ex instanceof LlmFailureException lfe && lfe.isRetryable()))
                 .doOnError(e -> log.error("GigaChat completion [{}] итоговая ошибка: {} - {}",
                         model, e.getClass().getSimpleName(), e.getMessage()));

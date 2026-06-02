@@ -39,6 +39,9 @@ public class GenerateFromCriteriaService {
         String structureTemplate = null;
 
         for (int i = 1; i <= variantsCount; i++) {
+            if (i > 1) {
+                try { Thread.sleep(3000); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); }
+            }
             try {
                 GeneratedModels.GeneratedVariant v = generateOne(criteria, params, i, structureTemplate);
                 if (v != null && v.tasks() != null && !v.tasks().isEmpty()) {

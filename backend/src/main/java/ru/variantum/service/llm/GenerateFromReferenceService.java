@@ -40,6 +40,9 @@ public class GenerateFromReferenceService {
         List<GeneratedModels.GeneratedVariant> variants = new ArrayList<>();
 
         for (int i = 1; i <= variantsCount; i++) {
+            if (i > 1) {
+                try { Thread.sleep(3000); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); }
+            }
             try {
                 GeneratedModels.GeneratedVariant v = generateOne(
                         referenceText, analysisData, fullAnalysis, params, i, variantsCount, expectedTaskCount);
