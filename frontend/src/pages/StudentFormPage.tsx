@@ -1,12 +1,55 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { submissionsApi } from '../api/submissions.api';
 import { RichText } from '../components/RichText';
 import { MathText } from '../components/MathText';
 import type { PublicTask, TaskAnswer } from '../types/api';
+import 'mathlive';
+import 'mathlive/static.css';
 
 const LP = "'Littera Plain', sans-serif";
+
+// ── MathLive — типы и стили ───────────────────────────────────────────────
+
+interface MathFieldEl extends HTMLElement {
+  value: string;
+  focus(): void;
+}
+
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      'math-field': React.HTMLAttributes<HTMLElement> & {
+        ref?: React.Ref<MathFieldEl>;
+        style?: React.CSSProperties;
+        value?: string;
+      };
+    }
+  }
+}
+
+function initMathLiveKeyboardStyles() {
+  if (typeof window === 'undefined') return;
+  const STYLE_ID = 'ml-student-styles';
+  if (document.getElementById(STYLE_ID)) return;
+  const s = document.createElement('style');
+  s.id = STYLE_ID;
+  s.textContent = `
+    math-field::part(menu-toggle) { display: none !important; }
+    .ML__keyboard {
+      --keyboard-background: #ffffff !important;
+      --keyboard-toolbar-background: #f8fafc !important;
+      --keyboard-background-border: #e5e7eb !important;
+      --keycap-background: #f8fafc !important;
+      --keycap-background-hover: #e0f2fe !important;
+      --keycap-background-pressed: #bae6fd !important;
+      --keycap-text: #374151 !important;
+      border-top: 1px solid #e5e7eb !important;
+    }
+  `;
+  document.head.appendChild(s);
+}
 
 const INPUT_STYLE: React.CSSProperties = {
   width: '100%', padding: '10px 12px', border: '1.5px solid #e5e7eb',
@@ -31,17 +74,158 @@ function detectSubParts(text: string): string[] {
   return found.length >= 2 ? found : [];
 }
 
-// ── Предпросмотр LaTeX-формулы ────────────────────────────────────────────
-function MathPreview({ value }: { value: string }) {
-  if (!value.trim() || (!value.includes('$') && !value.includes('\\'))) return null;
+// ── Поле ввода с поддержкой вставки формулы через MathLive ───────────────
+function FormulaAnswerInput({
+  value,
+  onChange,
+  placeholder = 'Введите ответ...',
+  hint,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  hint?: string | null;
+}) {
+  const [showMath, setShowMath] = useState(false);
+  const mathFieldRef = useRef<MathFieldEl>(null);
+
+  function handleOpenMath() {
+    setShowMath(true);
+    setTimeout(() => {
+      if (mathFieldRef.current) {
+        mathFieldRef.current.value = '';
+        mathFieldRef.current.focus();
+      }
+    }, 50);
+  }
+
+  function handleApplyMath() {
+    if (!mathFieldRef.current) return;
+    const latex = mathFieldRef.current.value.trim();
+    if (latex) {
+      onChange(value ? `${value} $${latex}$` : `$${latex}$`);
+    }
+    setShowMath(false);
+  }
+
+  const hasMath = value.includes('$') || value.includes('\\');
+
   return (
-    <div style={{
-      marginTop: '6px', padding: '6px 10px',
-      background: '#f0fdf4', border: '1px solid #d1fae5',
-      borderRadius: '8px', fontSize: '14px',
-    }}>
-      <span style={{ fontSize: '11px', color: '#6b7280', marginRight: '8px', fontFamily: LP }}>Предпросмотр:</span>
-      <MathText>{value}</MathText>
+    <div>
+      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          style={{ ...INPUT_STYLE, flex: 1 }}
+          onFocus={(e) => (e.target.style.borderColor = '#21a038')}
+          onBlur={(e) => (e.target.style.borderColor = '#e5e7eb')}
+        />
+        <button
+          type="button"
+          onClick={handleOpenMath}
+          title="Вставить формулу"
+          style={{
+            padding: '9px 12px',
+            border: `1.5px solid ${showMath ? '#0b8acb' : '#c7d9e8'}`,
+            borderRadius: '10px',
+            background: showMath ? '#eff6ff' : '#f8fbfe',
+            color: '#0b8acb',
+            cursor: 'pointer',
+            fontSize: '13px',
+            fontFamily: LP,
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '5px',
+          }}
+        >
+          <span style={{ fontSize: '16px', lineHeight: 1 }}>∑</span> Формула
+        </button>
+      </div>
+
+      {hasMath && !showMath && (
+        <div style={{
+          marginTop: '6px', padding: '6px 10px',
+          background: '#f0fdf4', border: '1px solid #d1fae5',
+          borderRadius: '8px', fontSize: '14px',
+        }}>
+          <span style={{ fontSize: '11px', color: '#6b7280', marginRight: '8px', fontFamily: LP }}>Предпросмотр:</span>
+          <MathText>{value}</MathText>
+        </div>
+      )}
+
+      {showMath && (
+        <div style={{
+          marginTop: '8px',
+          border: '1.5px solid #93c5fd',
+          borderRadius: '12px',
+          overflow: 'hidden',
+          background: '#fff',
+        }}>
+          <div style={{
+            padding: '8px 14px',
+            background: '#eff6ff',
+            borderBottom: '1px solid #bfdbfe',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}>
+            <span style={{ fontSize: '12px', fontWeight: 600, color: '#1d4ed8', fontFamily: LP }}>
+              Конструктор формулы
+            </span>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                type="button"
+                onClick={() => setShowMath(false)}
+                style={{
+                  padding: '4px 12px', border: '1px solid #d1d5db', borderRadius: '8px',
+                  fontSize: '12px', background: '#fff', cursor: 'pointer', fontFamily: LP, color: '#555',
+                }}
+              >
+                Отмена
+              </button>
+              <button
+                type="button"
+                onClick={handleApplyMath}
+                style={{
+                  padding: '4px 14px', border: 'none', borderRadius: '8px',
+                  fontSize: '12px', background: '#0b8acb', color: '#fff',
+                  cursor: 'pointer', fontFamily: LP, fontWeight: 700,
+                }}
+              >
+                Вставить
+              </button>
+            </div>
+          </div>
+          <div style={{ padding: '10px 12px' }}>
+            {React.createElement('math-field', {
+              ref: mathFieldRef,
+              style: {
+                width: '100%',
+                fontSize: '1.1em',
+                border: 'none',
+                outline: 'none',
+                minHeight: '48px',
+                display: 'block',
+              },
+            })}
+          </div>
+          <div style={{ padding: '4px 14px 10px', borderTop: '1px solid #f1f5f9' }}>
+            <p style={{ fontSize: '11px', color: '#9ca3af', fontFamily: LP, margin: 0 }}>
+              Используйте виртуальную клавиатуру для ввода дробей, корней и других символов. Нажмите «Вставить».
+            </p>
+          </div>
+        </div>
+      )}
+
+      {hint && (
+        <p style={{ marginTop: '6px', fontSize: '12px', color: '#9ca3af', fontFamily: LP }}>
+          Формат ответа: {hint}
+        </p>
+      )}
     </div>
   );
 }
@@ -64,29 +248,18 @@ function MultiPartInput({
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
       {subParts.map(letter => (
-        <div key={letter}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-            <span style={{ fontFamily: LP, fontSize: '15px', fontWeight: 700, color: '#374151', paddingTop: '10px', minWidth: '22px' }}>{letter})</span>
-            <div style={{ flex: 1 }}>
-              <input
-                type="text"
-                value={subAnswers[letter] ?? ''}
-                onChange={(e) => handleChange(letter, e.target.value)}
-                placeholder="Введите ответ..."
-                style={INPUT_STYLE}
-                onFocus={(e) => (e.target.style.borderColor = '#21a038')}
-                onBlur={(e) => (e.target.style.borderColor = '#e5e7eb')}
-              />
-              <MathPreview value={subAnswers[letter] ?? ''} />
-            </div>
+        <div key={letter} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+          <span style={{ fontFamily: LP, fontSize: '15px', fontWeight: 700, color: '#374151', paddingTop: '10px', minWidth: '22px' }}>{letter})</span>
+          <div style={{ flex: 1 }}>
+            <FormulaAnswerInput
+              value={subAnswers[letter] ?? ''}
+              onChange={(v) => handleChange(letter, v)}
+              placeholder={`Ответ для ${letter})...`}
+              hint={hint}
+            />
           </div>
-          {hint && (
-            <p style={{ marginLeft: '32px', marginTop: '4px', fontSize: '12px', color: '#9ca3af', fontFamily: LP }}>
-              Формат ответа: {hint}
-            </p>
-          )}
         </div>
       ))}
     </div>
@@ -104,30 +277,37 @@ function TaskInput({ task, answer, onChange }: {
     const options = parseTestOptions(task.text);
     if (options.length >= 2) {
       return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          {options.map((opt) => {
-            const label = opt.split(')')[0].trim() + ')';
-            return (
-              <label key={opt} style={{
-                display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer',
-                padding: '8px 12px', borderRadius: '10px',
-                border: `1.5px solid ${answer === label ? '#21a038' : '#e5e7eb'}`,
-                background: answer === label ? '#f0faf2' : '#fafafa', transition: 'all 0.15s',
-              }}>
-                <input
-                  type="radio"
-                  name={`task-${task.taskId}`}
-                  value={label}
-                  checked={answer === label}
-                  onChange={() => onChange(label)}
-                  style={{ accentColor: '#21a038', width: '16px', height: '16px', flexShrink: 0 }}
-                />
-                <span style={{ fontFamily: LP, fontSize: '15px', color: '#222', lineHeight: 1.4 }}>
-                  <MathText>{opt}</MathText>
-                </span>
-              </label>
-            );
-          })}
+        <div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {options.map((opt) => {
+              const label = opt.split(')')[0].trim() + ')';
+              return (
+                <label key={opt} style={{
+                  display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer',
+                  padding: '8px 12px', borderRadius: '10px',
+                  border: `1.5px solid ${answer === label ? '#21a038' : '#e5e7eb'}`,
+                  background: answer === label ? '#f0faf2' : '#fafafa', transition: 'all 0.15s',
+                }}>
+                  <input
+                    type="radio"
+                    name={`task-${task.taskId}`}
+                    value={label}
+                    checked={answer === label}
+                    onChange={() => onChange(label)}
+                    style={{ accentColor: '#21a038', width: '16px', height: '16px', flexShrink: 0 }}
+                  />
+                  <span style={{ fontFamily: LP, fontSize: '15px', color: '#222', lineHeight: 1.4 }}>
+                    <MathText>{opt}</MathText>
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+          {hint && (
+            <p style={{ marginTop: '6px', fontSize: '12px', color: '#9ca3af', fontFamily: LP }}>
+              Формат ответа: {hint}
+            </p>
+          )}
         </div>
       );
     }
@@ -135,19 +315,26 @@ function TaskInput({ task, answer, onChange }: {
 
   if (type === 'OPEN_QUESTION') {
     return (
-      <textarea
-        value={answer}
-        onChange={(e) => onChange(e.target.value)}
-        rows={5}
-        placeholder="Введите развёрнутый ответ..."
-        style={{
-          width: '100%', padding: '10px 12px', border: '1.5px solid #e5e7eb',
-          borderRadius: '10px', fontFamily: LP, fontSize: '15px', color: '#222',
-          resize: 'vertical', outline: 'none', boxSizing: 'border-box',
-        }}
-        onFocus={(e) => (e.target.style.borderColor = '#21a038')}
-        onBlur={(e) => (e.target.style.borderColor = '#e5e7eb')}
-      />
+      <div>
+        <textarea
+          value={answer}
+          onChange={(e) => onChange(e.target.value)}
+          rows={5}
+          placeholder="Введите развёрнутый ответ..."
+          style={{
+            width: '100%', padding: '10px 12px', border: '1.5px solid #e5e7eb',
+            borderRadius: '10px', fontFamily: LP, fontSize: '15px', color: '#222',
+            resize: 'vertical', outline: 'none', boxSizing: 'border-box',
+          }}
+          onFocus={(e) => (e.target.style.borderColor = '#21a038')}
+          onBlur={(e) => (e.target.style.borderColor = '#e5e7eb')}
+        />
+        {hint && (
+          <p style={{ marginTop: '6px', fontSize: '12px', color: '#9ca3af', fontFamily: LP }}>
+            Формат ответа: {hint}
+          </p>
+        )}
+      </div>
     );
   }
 
@@ -156,25 +343,7 @@ function TaskInput({ task, answer, onChange }: {
     return <MultiPartInput subParts={subParts} answer={answer} onChange={onChange} hint={hint} />;
   }
 
-  return (
-    <div>
-      <input
-        type="text"
-        value={answer}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder="Введите ответ..."
-        style={INPUT_STYLE}
-        onFocus={(e) => (e.target.style.borderColor = '#21a038')}
-        onBlur={(e) => (e.target.style.borderColor = '#e5e7eb')}
-      />
-      <MathPreview value={answer} />
-      {hint && (
-        <p style={{ marginTop: '6px', fontSize: '12px', color: '#9ca3af', fontFamily: LP }}>
-          Формат ответа: {hint}
-        </p>
-      )}
-    </div>
-  );
+  return <FormulaAnswerInput value={answer} onChange={onChange} hint={hint} />;
 }
 
 // ── Диалог подтверждения сдачи ────────────────────────────────────────────
@@ -255,6 +424,10 @@ function ConfirmDialog({
 export function StudentFormPage() {
   const { token } = useParams<{ token: string }>();
   const storageKey = `va_form_${token}`;
+
+  useEffect(() => {
+    initMathLiveKeyboardStyles();
+  }, []);
 
   const [step, setStep] = useState<'name' | 'tasks' | 'done' | 'already_submitted'>('name');
   const [nameInput, setNameInput] = useState('');

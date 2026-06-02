@@ -1031,6 +1031,11 @@ export function EditorPage() {
                       <span style={{ fontFamily: LP, fontSize: '17px', color: '#000' }}>{label}</span>
                     </button>
                   ))}
+                  {user && (
+                    <div style={{ padding: '14px 20px', borderBottom: '1px solid #f0f0f0' }}>
+                      <LimitsBadge scale={1} inlineExpand />
+                    </div>
+                  )}
                 </nav>
               </div>
             </>
@@ -1275,31 +1280,21 @@ export function EditorPage() {
         <div className="px-5 pt-4 pb-5">
           <p className="text-sm font-semibold text-gray-700 mb-0.5">Количество вариантов</p>
           <p className="text-xs text-gray-400 mb-4">Сколько вариантов сгенерировать для комплекта</p>
-          <div className="flex items-center gap-3 flex-wrap">
-            <button
-              onClick={() => handleSetVariantCount(Math.max(2, genVariantCount - 1))}
-              disabled={genVariantCount <= 2}
-              className="w-9 h-9 rounded-xl border border-gray-300 bg-white text-gray-600 font-bold text-lg flex items-center justify-center hover:border-gray-400 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-            >−</button>
-            <span className="text-2xl font-bold text-gray-800 w-8 text-center">{genVariantCount}</span>
-            <button
-              onClick={() => handleSetVariantCount(Math.min(10, genVariantCount + 1))}
-              disabled={genVariantCount >= 10}
-              className="w-9 h-9 rounded-xl border border-gray-300 bg-white text-gray-600 font-bold text-lg flex items-center justify-center hover:border-gray-400 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-            >+</button>
-            <div className="flex gap-1.5 ml-2">
-              {[2, 3, 4, 5].map(v => (
-                <button
-                  key={v}
-                  onClick={() => handleSetVariantCount(v)}
-                  className={`w-9 h-9 rounded-xl border transition-all text-sm font-bold ${
-                    genVariantCount === v
-                      ? 'bg-[#22a139] text-white border-[#22a139]'
-                      : 'bg-white text-gray-600 border-gray-300 hover:border-gray-400'
-                  }`}
-                >{v}</button>
-              ))}
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => handleSetVariantCount(Math.max(2, genVariantCount - 1))}
+                disabled={genVariantCount <= 2}
+                className="w-9 h-9 rounded-xl border border-gray-300 bg-white text-gray-600 font-bold text-lg flex items-center justify-center hover:border-gray-400 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+              >−</button>
+              <span className="text-2xl font-bold text-gray-800 w-8 text-center">{genVariantCount}</span>
+              <button
+                onClick={() => handleSetVariantCount(Math.min(10, genVariantCount + 1))}
+                disabled={genVariantCount >= 10}
+                className="w-9 h-9 rounded-xl border border-gray-300 bg-white text-gray-600 font-bold text-lg flex items-center justify-center hover:border-gray-400 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+              >+</button>
             </div>
+            <p className="text-xs text-gray-400">от 2 до 10</p>
           </div>
         </div>
       </div>
@@ -1325,9 +1320,16 @@ export function EditorPage() {
         </p>
       )}
       {generate.isPending && (
-        <p className="text-center text-sm text-gray-400 mt-3">
-          GigaChat генерирует варианты — это займёт 10–30 секунд...
-        </p>
+        <div className="flex flex-col items-center gap-2 mt-3">
+          <div className="flex gap-1.5">
+            <span className="w-2 h-2 bg-[#0b8acb] rounded-full animate-bounce [animation-delay:-0.3s]" />
+            <span className="w-2 h-2 bg-[#0b8acb] rounded-full animate-bounce [animation-delay:-0.15s]" />
+            <span className="w-2 h-2 bg-[#0b8acb] rounded-full animate-bounce" />
+          </div>
+          <p className="text-sm text-gray-400">
+            GigaChat генерирует варианты — это займёт 10–30 секунд...
+          </p>
+        </div>
       )}
     </main>
     </div>

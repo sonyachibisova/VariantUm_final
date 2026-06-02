@@ -47,7 +47,7 @@ public class TaskSplitService {
             List<TaskSplitResponse.SplitTask> tasks = callLlmSplit(trimmed, TEMPERATURE_SPLIT);
             if (tasks.isEmpty()) {
                 log.warn("LLM-разбиение вернуло пустой список — отдаём текст одним заданием");
-                return single(trimmed);
+                return withSubTaskSplit(single(trimmed));
             }
             // Проверяем, не было ли чрезмерного дробления.
             // Условия ретрая не зависят от estimateTaskCount (тот часто возвращает 0):
@@ -73,10 +73,10 @@ public class TaskSplitService {
                 }
             }
             log.info("Текст разбит на {} заданий", tasks.size());
-            return new TaskSplitResponse(tasks);
+            return withSubTaskSplit(new TaskSplitResponse(tasks));
         } catch (Exception e) {
             log.warn("LLM-разбиение не удалось ({}), пробуем регекс-разбиение", e.getMessage());
-            return regexSplit(trimmed);
+            return withSubTaskSplit(regexSplit(trimmed));
         }
     }
 
@@ -293,5 +293,11 @@ public class TaskSplitService {
 
     private TaskSplitResponse single(String text) {
         return new TaskSplitResponse(List.of(new TaskSplitResponse.SplitTask(text, null)));
+    }
+
+    /** Применяет разбиение подпунктов а)/б)/в) к готовому результату. */
+    private static TaskSplitResponse withSubTaskSplit(TaskSplitResponse r) {
+        if (r.tasks() == null || r.tasks().isEmpty()) return r;
+        return new TaskSplitResponse(SubTaskSplitter.splitSplitTasks(r.tasks()));
     }
 }

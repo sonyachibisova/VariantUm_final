@@ -90,9 +90,10 @@ function StudentLinkRow({ student }: { student: FormStudentItem }) {
 interface Props {
   projectId: string;
   onClose: () => void;
+  tourMode?: boolean;
 }
 
-export function FormExportDialog({ projectId, onClose }: Props) {
+export function FormExportDialog({ projectId, onClose, tourMode }: Props) {
   const queryClient = useQueryClient();
   const [mode, setMode] = useState<'CLASS_LIST' | 'INDIVIDUAL_LINKS'>('CLASS_LIST');
   const [studentsText, setStudentsText] = useState('');
@@ -104,6 +105,7 @@ export function FormExportDialog({ projectId, onClose }: Props) {
   const { data: existingAssignments, isLoading: loadingExisting } = useQuery({
     queryKey: ['forms', projectId],
     queryFn: () => formsApi.listAssignments(projectId),
+    enabled: !tourMode,
   });
 
   // Derive assignment without async effect: immediately use query cache
@@ -179,11 +181,12 @@ export function FormExportDialog({ projectId, onClose }: Props) {
               </p>
               <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
                 {([
-                  { id: 'CLASS_LIST', label: 'Список класса', desc: 'Одна ссылка, ученик вводит фамилию' },
-                  { id: 'INDIVIDUAL_LINKS', label: 'Отдельные ссылки', desc: 'Каждый вариант — своя ссылка' },
-                ] as const).map(({ id, label, desc }) => (
+                  { id: 'CLASS_LIST', label: 'Список класса', desc: 'Одна ссылка, ученик вводит фамилию', tourId: 'form-mode-class' },
+                  { id: 'INDIVIDUAL_LINKS', label: 'Отдельные ссылки', desc: 'Каждый вариант — своя ссылка', tourId: 'form-mode-individual' },
+                ] as const).map(({ id, label, desc, tourId }) => (
                   <button
                     key={id}
+                    data-tour={tourId}
                     onClick={() => setMode(id)}
                     style={{
                       flex: 1, padding: '12px', border: `2px solid ${mode === id ? '#21a038' : '#e5e7eb'}`,
@@ -203,6 +206,7 @@ export function FormExportDialog({ projectId, onClose }: Props) {
                     Список учеников (по одному на строке)
                   </p>
                   <textarea
+                    data-tour="form-students-textarea"
                     value={studentsText}
                     onChange={(e) => setStudentsText(e.target.value)}
                     rows={7}

@@ -13,6 +13,7 @@ export interface TourStep {
   navigateTo?: string;
   advanceOnClick?: boolean;
   openExportModal?: boolean;
+  openFormModal?: boolean;
 }
 
 interface TourContextValue {

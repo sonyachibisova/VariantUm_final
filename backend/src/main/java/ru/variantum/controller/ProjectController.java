@@ -78,6 +78,11 @@ public class ProjectController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/{id}/regenerate")
+    public ProjectDetailResponse retryGeneration(@PathVariable UUID id) {
+        return projectService.retryGeneration(CurrentUser.requireId(), id);
+    }
+
     @PatchMapping("/{id}/reference-text")
     public ProjectDetailResponse updateReferenceText(
             @PathVariable UUID id,

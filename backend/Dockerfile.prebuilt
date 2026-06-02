@@ -1,0 +1,26 @@
+# ============================================================
+# ВариантУм Backend — использует pre-built JAR (собранный локально)
+# Запускать только после: mvn clean package -DskipTests
+# ============================================================
+FROM eclipse-temurin:21-jre-jammy
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        tesseract-ocr \
+        tesseract-ocr-rus \
+        tesseract-ocr-eng \
+        libtesseract-dev \
+        fontconfig \
+        fonts-dejavu \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV TESSDATA_PREFIX=/usr/share/tesseract-ocr/4.00/tessdata/
+
+WORKDIR /app
+COPY target/variantum-backend.jar app.jar
+
+EXPOSE 8080
+
+ENV JAVA_OPTS="-XX:+UseG1GC -XX:MaxRAMPercentage=75.0"
+
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app/app.jar"]

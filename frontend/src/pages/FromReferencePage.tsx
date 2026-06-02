@@ -292,9 +292,16 @@ function QuickLaunchPanel({
           </p>
         )}
         {busy && (
-          <p className="text-center text-sm text-gray-400 mt-3">
-            GigaChat генерирует варианты — это займёт 10–30 секунд...
-          </p>
+          <div className="flex flex-col items-center gap-2 mt-3">
+            <div className="flex gap-1.5">
+              <span className="w-2 h-2 bg-[#0b8acb] rounded-full animate-bounce [animation-delay:-0.3s]" />
+              <span className="w-2 h-2 bg-[#0b8acb] rounded-full animate-bounce [animation-delay:-0.15s]" />
+              <span className="w-2 h-2 bg-[#0b8acb] rounded-full animate-bounce" />
+            </div>
+            <p className="text-center text-sm text-gray-400">
+              GigaChat генерирует варианты — это займёт 10–30 секунд...
+            </p>
+          </div>
         )}
       </div>
     </div>
@@ -634,6 +641,11 @@ export function FromReferencePage() {
                       <span style={{ fontFamily: LP, fontSize: '17px', color: '#000' }}>{label}</span>
                     </button>
                   ))}
+                  {user && (
+                    <div style={{ padding: '14px 20px', borderBottom: '1px solid #f0f0f0' }}>
+                      <LimitsBadge scale={1} inlineExpand />
+                    </div>
+                  )}
                 </nav>
               </div>
             </>

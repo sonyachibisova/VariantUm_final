@@ -427,7 +427,14 @@ public class FormService {
     }
 
     private String normalizeAnswer(String text) {
-        String t = text.toLowerCase().trim().replaceAll("[.!?,;]+$", "");
+        String t = text.toLowerCase().trim();
+        // Снимаем обёртку LaTeX-долларов: $3$ → 3, $$2.5$$ → 2.5
+        t = t.replaceAll("^\\$+(.*?)\\$+$", "$1").trim();
+        // LaTeX-запятая как разделитель дроби: 2{,}32 → 2,32
+        t = t.replace("{,}", ",").replace("{.}", ".");
+        // Убираем хвостовую пунктуацию
+        t = t.replaceAll("[.!?,;]+$", "");
+        // Запятая и точка как десятичный разделитель взаимозаменяемы
         String normalized = t.replace(',', '.');
         try {
             double d = Double.parseDouble(normalized);

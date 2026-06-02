@@ -122,6 +122,78 @@ public class ProjectService {
         projectRepository.save(project);
     }
 
+    /**
+     * Повторная генерация провалившегося проекта: использует данные, сохранённые при создании.
+     * Для FROM_CRITERIA: tasksPerVariant и targetTimeMinutes берутся из paramsJson или defaults.
+     */
+    @Transactional
+    public ProjectDetailResponse retryGeneration(UUID userId, UUID projectId) {
+        rateLimitService.requireQuota(userId);
+
+        Project project = projectRepository.findByIdAndUserId(projectId, userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Проект не найден"));
+
+        project.setStatus(Project.Status.GENERATING);
+        project = projectRepository.save(project);
+
+        try {
+            CreateProjectRequest.ParamsData params = reconstructParams(project);
+            GeneratedModels.GeneratedSet set;
+
+            if (project.getMode() == Project.Mode.FROM_CRITERIA) {
+                CreateProjectRequest.CriteriaData criteria = reconstructCriteria(project, params);
+                set = generateFromCriteriaService.generate(criteria, params);
+            } else {
+                CreateProjectRequest.AnalysisData analysis = reconstructAnalysis(project);
+                set = generateFromReferenceService.generate(project.getReferenceText(), analysis, null, params);
+            }
+
+            persistVariants(project, set);
+            rateLimitService.deductPercent(userId, costService.setCost(set));
+
+            project.setStatus(Project.Status.READY);
+            project = projectRepository.save(project);
+            saveVersion(project, ProjectVersion.Action.GENERATED, "Повторная генерация");
+            runRecommendations(project);
+        } catch (Exception e) {
+            project.setStatus(Project.Status.FAILED);
+            log.error("Ошибка повторной генерации проекта {}: {}", project.getId(), e.getMessage(), e);
+            project = projectRepository.save(project);
+        }
+
+        return toDetailResponse(project);
+    }
+
+    private CreateProjectRequest.ParamsData reconstructParams(Project project) {
+        if (project.getParamsJson() != null && !project.getParamsJson().isNull()) {
+            try {
+                return objectMapper.treeToValue(project.getParamsJson(), CreateProjectRequest.ParamsData.class);
+            } catch (Exception e) {
+                log.warn("Не удалось десериализовать paramsJson проекта {}: {}", project.getId(), e.getMessage());
+            }
+        }
+        return new CreateProjectRequest.ParamsData(4, java.util.List.of("NUMBERS", "CONTEXT"),
+                null, "EQUAL", null, null);
+    }
+
+    private CreateProjectRequest.CriteriaData reconstructCriteria(Project project, CreateProjectRequest.ParamsData params) {
+        String subject = project.getSubject() != null ? project.getSubject() : "math";
+        int grade = project.getGrade() != null ? project.getGrade() : 9;
+        String topic = project.getTopic() != null ? project.getTopic() : "";
+        String taskType = project.getTaskType() != null ? project.getTaskType().name() : "PROBLEM";
+        int difficulty = project.getTargetDifficulty() != null ? project.getTargetDifficulty() : 3;
+        return new CreateProjectRequest.CriteriaData(subject, grade, topic, taskType, 5, 45, difficulty);
+    }
+
+    private CreateProjectRequest.AnalysisData reconstructAnalysis(Project project) {
+        String subject = project.getSubject() != null ? project.getSubject() : "other";
+        int grade = project.getGrade() != null ? project.getGrade() : 9;
+        String topic = project.getTopic() != null ? project.getTopic() : "";
+        String taskType = project.getTaskType() != null ? project.getTaskType().name() : "PROBLEM";
+        int difficulty = project.getTargetDifficulty() != null ? project.getTargetDifficulty() : 3;
+        return new CreateProjectRequest.AnalysisData(subject, grade, topic, taskType, difficulty);
+    }
+
     /** Возвращает проект пользователя или 404/403. Используется VariantService. */
     @Transactional(readOnly = true)
     public Project requireOwned(UUID userId, UUID projectId) {
@@ -150,11 +222,11 @@ public class ProjectService {
                 .totalEstimatedMinutes(resolveTotalMinutes(gv))
                 .build());
         if (gv.tasks() != null) {
-            int i = 1;
-            for (var gt : gv.tasks()) {
+            var tasks = ru.variantum.service.llm.SubTaskSplitter.splitGeneratedTasks(gv.tasks());
+            for (var gt : tasks) {
                 taskRepository.save(Task.builder()
                         .variantId(variant.getId())
-                        .indexInVariant(gt.index() > 0 ? gt.index() : i)
+                        .indexInVariant(gt.index())
                         .text(cleanTaskText(gt.text()))
                         .answer(gt.answer())
                         .steps(gt.steps())
@@ -163,7 +235,6 @@ public class ProjectService {
                         .taskType(parseTaskType(gt.taskType()))
                         .metadataJson(buildMetadataJson(gt))
                         .build());
-                i++;
             }
         }
         return variant;

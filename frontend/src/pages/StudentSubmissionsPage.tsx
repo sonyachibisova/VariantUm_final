@@ -225,7 +225,7 @@ function SubmissionDetail({ submission, onClose }: { submission: Submission; onC
               {/* Ответ ученика */}
               <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '10px', padding: '10px 12px', marginBottom: '8px' }}>
                 <p style={{ fontFamily: LP, fontSize: '12px', color: '#9ca3af', marginBottom: '3px' }}>Ответ ученика:</p>
-                <p style={{ fontFamily: LP, fontSize: '15px', color: '#222' }}>{a.answer || '—'}</p>
+                <div style={{ fontFamily: LP, fontSize: '15px', color: '#222' }}>{a.answer ? <MathText>{a.answer}</MathText> : '—'}</div>
               </div>
 
               {/* Правильный ответ */}
@@ -237,7 +237,7 @@ function SubmissionDetail({ submission, onClose }: { submission: Submission; onC
                 }}>
                   <span style={{ fontFamily: LP, fontSize: '13px', color: '#6b7280' }}>Правильный ответ:</span>
                   <span style={{ fontFamily: LP, fontSize: '14px', fontWeight: 600, color: effective === true ? '#15803d' : '#b45309' }}>
-                    {expectedAnswer}
+                    <MathText>{expectedAnswer}</MathText>
                   </span>
                 </div>
               )}

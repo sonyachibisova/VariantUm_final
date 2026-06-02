@@ -75,6 +75,11 @@ export const projectsApi = {
       .post<Project>(`/projects/${projectId}/reparse-reference`)
       .then((r) => r.data),
 
+  retryGeneration: (projectId: string) =>
+    apiClient
+      .post<Project>(`/projects/${projectId}/regenerate`)
+      .then((r) => r.data),
+
   // ---- История версий ----
 
   history: (projectId: string) =>

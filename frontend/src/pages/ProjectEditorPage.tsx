@@ -1184,6 +1184,17 @@ export function ProjectEditorPage() {
     }
   }, [tourActive, currentStep, steps]);
 
+  // Авто-открываем/закрываем модал онлайн-формы во время тура
+  useEffect(() => {
+    if (!tourActive || !steps.length || currentStep >= steps.length) return;
+    const step = steps[currentStep];
+    if (step?.openFormModal) {
+      setFormOpen(true);
+    } else if (step?.tourId && !step.tourId.startsWith('form-')) {
+      setFormOpen(false);
+    }
+  }, [tourActive, currentStep, steps]);
+
   const isTourMode = !projectId;
 
   const { data: project, isLoading, isError } = useQuery({
@@ -1197,6 +1208,13 @@ export function ProjectEditorPage() {
   const effectiveProject = isTourMode ? TOUR_MOCK_PROJECT : project;
 
   const showError = (msg: string) => { setErrorMsg(msg); setBusy(false); };
+
+  const retryGeneration = useMutation({
+    mutationFn: () => projectsApi.retryGeneration(projectId!),
+    onMutate: () => { setBusy(true); setErrorMsg(null); },
+    onSuccess: u => { queryClient.setQueryData(['project', projectId], u); setBusy(false); refreshLimits(); },
+    onError: () => { setBusy(false); showError('GigaChat не смог сгенерировать задания. Попробуйте ещё раз или уменьшите число вариантов.'); },
+  });
 
   const aiEditAll = useMutation({
     mutationFn: (prompt: string) => projectsApi.aiEditAll(projectId!, { prompt }),
@@ -1372,6 +1390,11 @@ export function ProjectEditorPage() {
                       <span style={{ fontFamily: LP, fontSize: '17px', color: '#000' }}>{label}</span>
                     </button>
                   ))}
+                  {user && (
+                    <div style={{ padding: '14px 20px', borderBottom: '1px solid #f0f0f0' }}>
+                      <LimitsBadge scale={1} inlineExpand />
+                    </div>
+                  )}
                 </nav>
               </div>
             </>
@@ -1457,12 +1480,25 @@ export function ProjectEditorPage() {
           <p className="text-gray-500 text-sm mb-5">
             GigaChat не смог сгенерировать задания. Попробуйте ещё раз или уменьшите число вариантов.
           </p>
-          <Link
-            to={effectiveProject!.mode === 'FROM_REFERENCE' ? '/upload' : '/generate'}
-            className="inline-block px-5 py-2.5 bg-[#22a139] hover:bg-[#1a8a30] text-white rounded-xl text-sm font-semibold transition-colors"
-          >
-            Попробовать снова
-          </Link>
+          <div className="flex items-center justify-center gap-3 flex-wrap">
+            {projectId && (
+              <button
+                onClick={() => retryGeneration.mutate()}
+                disabled={retryGeneration.isPending}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#22a139] hover:bg-[#1a8a30] disabled:opacity-60 text-white rounded-xl text-sm font-semibold transition-colors"
+              >
+                {retryGeneration.isPending ? (
+                  <><span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Генерирую...</>
+                ) : 'Попробовать снова'}
+              </button>
+            )}
+            <Link
+              to={effectiveProject!.mode === 'FROM_REFERENCE' ? '/upload' : '/generate'}
+              className="inline-block px-5 py-2.5 border border-gray-300 hover:bg-gray-50 text-gray-600 rounded-xl text-sm font-semibold transition-colors"
+            >
+              Создать новый
+            </Link>
+          </div>
         </div>
       )}
 
@@ -1639,10 +1675,11 @@ export function ProjectEditorPage() {
       )}
 
       {/* Модал онлайн-формы */}
-      {formOpen && projectId && (
+      {formOpen && (projectId || isTourMode) && (
         <FormExportDialog
-          projectId={projectId}
+          projectId={projectId ?? 'tour-mock'}
           onClose={() => setFormOpen(false)}
+          tourMode={isTourMode}
         />
       )}
 

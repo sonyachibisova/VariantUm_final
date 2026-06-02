@@ -404,12 +404,12 @@ export function LibraryPage() {
                       <span style={{ fontFamily: LP, fontSize: '17px', color: '#000' }}>{label}</span>
                     </button>
                   ))}
+                  {user && (
+                    <div style={{ padding: '14px 20px', borderBottom: '1px solid #f0f0f0' }}>
+                      <LimitsBadge scale={1} inlineExpand />
+                    </div>
+                  )}
                 </nav>
-                {user && (
-                  <div style={{ padding: '16px 20px', borderTop: '1px solid #f0f0f0' }}>
-                    <LimitsBadge scale={1} />
-                  </div>
-                )}
               </div>
             </>
           )}
