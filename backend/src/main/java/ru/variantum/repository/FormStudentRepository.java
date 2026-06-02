@@ -11,5 +11,5 @@ public interface FormStudentRepository extends JpaRepository<FormStudent, UUID> 
     Optional<FormStudent> findByAccessToken(String token);
     List<FormStudent> findByAssignmentId(UUID assignmentId);
     long countByAssignmentId(UUID assignmentId);
-    List<FormStudent> findByAssignmentIdAndFullNameContainingIgnoreCase(UUID assignmentId, String name);
+    List<FormStudent> findByAssignmentIdAndFullNameIgnoreCase(UUID assignmentId, String name);
 }

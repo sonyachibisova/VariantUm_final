@@ -4,8 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import ru.variantum.domain.*;
 import ru.variantum.dto.request.CreateFormAssignmentRequest;
 import ru.variantum.dto.request.SubmitAnswersRequest;
@@ -15,6 +18,7 @@ import ru.variantum.dto.response.*;
 import ru.variantum.exception.ResourceNotFoundException;
 import ru.variantum.repository.*;
 
+import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -25,11 +29,13 @@ import java.util.stream.Collectors;
 public class FormService {
 
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+    private static final int MAX_ATTACHMENTS = 3;
 
     private final FormAssignmentRepository formAssignmentRepository;
     private final FormStudentRepository formStudentRepository;
     private final FormVariantTokenRepository formVariantTokenRepository;
     private final StudentSubmissionRepository studentSubmissionRepository;
+    private final StudentSubmissionAttachmentRepository attachmentRepository;
     private final ProjectRepository projectRepository;
     private final VariantRepository variantRepository;
     private final TaskRepository taskRepository;
@@ -129,14 +135,8 @@ public class FormService {
         return responses;
     }
 
-    /**
-     * Determines type of the token and returns info needed by student UI.
-     * CLASS_LIST: student must enter their name.
-     * VARIANT: student directly sees tasks.
-     */
     @Transactional(readOnly = true)
     public FormTokenInfoResponse resolveAnyToken(String token) {
-        // 1. CLASS_LIST assignment token
         Optional<FormAssignment> assignmentOpt = formAssignmentRepository.findByAccessToken(token);
         if (assignmentOpt.isPresent()) {
             FormAssignment a = assignmentOpt.get();
@@ -144,14 +144,12 @@ public class FormService {
             return new FormTokenInfoResponse("CLASS_LIST", a.getId(), project.getTitle(), null, null);
         }
 
-        // 2. Student token (from CLASS_LIST assignment, unique per student)
         Optional<FormStudent> studentOpt = formStudentRepository.findByAccessToken(token);
         if (studentOpt.isPresent()) {
             return buildVariantResponse(studentOpt.get().getAssignmentId(),
                     studentOpt.get().getVariantId());
         }
 
-        // 3. Variant token (INDIVIDUAL_LINKS)
         Optional<FormVariantToken> vtOpt = formVariantTokenRepository.findByAccessToken(token);
         if (vtOpt.isPresent()) {
             return buildVariantResponse(vtOpt.get().getAssignmentId(), vtOpt.get().getVariantId());
@@ -166,7 +164,7 @@ public class FormService {
                 .orElseThrow(() -> new ResourceNotFoundException("Ссылка недействительна"));
 
         List<FormStudent> matches = formStudentRepository
-                .findByAssignmentIdAndFullNameContainingIgnoreCase(assignment.getId(), name.trim());
+                .findByAssignmentIdAndFullNameIgnoreCase(assignment.getId(), name.trim());
         if (matches.isEmpty()) {
             throw new ResourceNotFoundException("Фамилия не найдена, попробуйте ещё раз");
         }
@@ -214,8 +212,71 @@ public class FormService {
                 .autoScore(processAutoScore(tasks, req.answers()))
                 .build();
         submission = studentSubmissionRepository.save(submission);
-        return toSubmissionResponse(submission, variant.getIndexInProject());
+        return toSubmissionResponse(submission, variant.getIndexInProject(), tasks);
     }
+
+    // ── Вложения (публичный эндпоинт, валидируется по токену) ────────────────
+
+    @Transactional
+    public AttachmentInfoResponse uploadAttachment(String token, UUID submissionId, MultipartFile file) {
+        StudentSubmission submission = studentSubmissionRepository.findById(submissionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Работа не найдена"));
+        validateTokenOwnsSubmission(token, submission);
+
+        if (attachmentRepository.countBySubmissionId(submissionId) >= MAX_ATTACHMENTS) {
+            throw new IllegalStateException("Максимум " + MAX_ATTACHMENTS + " файла на работу");
+        }
+
+        String fileName = file.getOriginalFilename() != null ? file.getOriginalFilename() : "file";
+        String mimeType = file.getContentType() != null ? file.getContentType() : "application/octet-stream";
+
+        try {
+            StudentSubmissionAttachment attachment = StudentSubmissionAttachment.builder()
+                    .submissionId(submissionId)
+                    .fileName(fileName)
+                    .mimeType(mimeType)
+                    .fileSize((int) file.getSize())
+                    .fileData(file.getBytes())
+                    .build();
+            attachment = attachmentRepository.save(attachment);
+            return new AttachmentInfoResponse(attachment.getId(), attachment.getFileName(),
+                    attachment.getMimeType(), attachment.getFileSize());
+        } catch (IOException e) {
+            throw new RuntimeException("Не удалось загрузить файл", e);
+        }
+    }
+
+    /** Отдаёт байты вложения учителю (требует JWT, проверяет владение проектом). */
+    @Transactional(readOnly = true)
+    public ResponseEntity<byte[]> getAttachment(UUID submissionId, UUID attachmentId, UUID userId) {
+        StudentSubmission submission = studentSubmissionRepository.findById(submissionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Работа не найдена"));
+        FormAssignment assignment = formAssignmentRepository.findById(submission.getAssignmentId()).orElseThrow();
+        if (!assignment.getUserId().equals(userId)) throw new ResourceNotFoundException("Работа не найдена");
+
+        StudentSubmissionAttachment attachment = attachmentRepository.findById(attachmentId)
+                .filter(a -> a.getSubmissionId().equals(submissionId))
+                .orElseThrow(() -> new ResourceNotFoundException("Файл не найден"));
+
+        String disposition = "inline; filename=\"" + attachment.getFileName() + "\"";
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, attachment.getMimeType())
+                .header(HttpHeaders.CONTENT_DISPOSITION, disposition)
+                .body(attachment.getFileData());
+    }
+
+    private void validateTokenOwnsSubmission(String token, StudentSubmission submission) {
+        UUID assignmentId = submission.getAssignmentId();
+        if (formStudentRepository.findByAccessToken(token)
+                .map(s -> s.getAssignmentId().equals(assignmentId)).orElse(false)) return;
+        if (formVariantTokenRepository.findByAccessToken(token)
+                .map(vt -> vt.getAssignmentId().equals(assignmentId)).orElse(false)) return;
+        if (formAssignmentRepository.findByAccessToken(token)
+                .map(a -> a.getId().equals(assignmentId)).orElse(false)) return;
+        throw new ResourceNotFoundException("Токен не соответствует работе");
+    }
+
+    // ── Учительские эндпоинты ─────────────────────────────────────────────────
 
     @Transactional(readOnly = true)
     public List<SubmissionResponse> listSubmissions(UUID projectId, UUID userId) {
@@ -227,7 +288,8 @@ public class FormService {
         for (FormAssignment a : assignments) {
             for (StudentSubmission s : studentSubmissionRepository.findByAssignmentId(a.getId())) {
                 Variant v = variantRepository.findById(s.getVariantId()).orElse(null);
-                result.add(toSubmissionResponse(s, v != null ? v.getIndexInProject() : 0));
+                List<Task> tasks = taskRepository.findByVariantIdOrderByIndexInVariantAsc(s.getVariantId());
+                result.add(toSubmissionResponse(s, v != null ? v.getIndexInProject() : 0, tasks));
             }
         }
         return result;
@@ -240,7 +302,8 @@ public class FormService {
         FormAssignment assignment = formAssignmentRepository.findById(sub.getAssignmentId()).orElseThrow();
         if (!assignment.getUserId().equals(userId)) throw new ResourceNotFoundException("Работа не найдена");
         Variant v = variantRepository.findById(sub.getVariantId()).orElse(null);
-        return toSubmissionResponse(sub, v != null ? v.getIndexInProject() : 0);
+        List<Task> tasks = taskRepository.findByVariantIdOrderByIndexInVariantAsc(sub.getVariantId());
+        return toSubmissionResponse(sub, v != null ? v.getIndexInProject() : 0, tasks);
     }
 
     @Transactional
@@ -252,7 +315,8 @@ public class FormService {
         sub.setTeacherReview(toJson(req.taskReviews()));
         studentSubmissionRepository.save(sub);
         Variant v = variantRepository.findById(sub.getVariantId()).orElse(null);
-        return toSubmissionResponse(sub, v != null ? v.getIndexInProject() : 0);
+        List<Task> tasks = taskRepository.findByVariantIdOrderByIndexInVariantAsc(sub.getVariantId());
+        return toSubmissionResponse(sub, v != null ? v.getIndexInProject() : 0, tasks);
     }
 
     @Transactional(readOnly = true)
@@ -264,7 +328,7 @@ public class FormService {
                 .stream().map(this::buildAssignmentResponse).collect(Collectors.toList());
     }
 
-    // ── Private helpers ───────────────────────────────────────────────────────────
+    // ── Приватные хелперы ─────────────────────────────────────────────────────
 
     private FormTokenInfoResponse buildVariantResponse(UUID assignmentId, UUID variantId) {
         FormAssignment assignment = formAssignmentRepository.findById(assignmentId).orElseThrow();
@@ -304,7 +368,6 @@ public class FormService {
             score.put("taskId", task.getId().toString());
             SubmitAnswersRequest.TaskAnswer given = answerMap.get(task.getId());
             String givenText = given != null ? given.answer() : null;
-            // Используем expectedAnswer из metadata_json если есть, иначе answer
             String storedAnswer = getExpectedAnswer(task);
             if (storedAnswer == null || storedAnswer.isBlank()) {
                 storedAnswer = task.getAnswer();
@@ -334,35 +397,40 @@ public class FormService {
         String s = stored.trim();
         String g = given.trim();
         if (taskType == Project.TaskType.TEST) {
-            // GigaChat generates "Б) текст варианта", student sends "Б)" — extract just the letter
             String sLetter = extractTestLetter(s);
             String gLetter = extractTestLetter(g);
             if (!sLetter.isEmpty() && !gLetter.isEmpty()) {
                 return sLetter.equalsIgnoreCase(gLetter);
             }
         }
-        // For numeric answers: normalize decimal separator and trailing zeros
+        // Многочастные ответы через "; "
+        if (s.contains(";")) {
+            String[] storedParts = s.split(";");
+            String[] givenParts = g.split(";");
+            if (storedParts.length != givenParts.length) return false;
+            for (int i = 0; i < storedParts.length; i++) {
+                if (!normalizeAnswer(storedParts[i].trim()).equalsIgnoreCase(normalizeAnswer(givenParts[i].trim()))) {
+                    return false;
+                }
+            }
+            return true;
+        }
         return normalizeAnswer(s).equalsIgnoreCase(normalizeAnswer(g));
     }
 
     private String extractTestLetter(String text) {
         if (text.isEmpty()) return "";
         char first = text.charAt(0);
-        // Cyrillic А Б В Г (upper and lower)
         if ("АБВГабвг".indexOf(first) >= 0) return String.valueOf(Character.toUpperCase(first));
-        // Latin A B C D (upper and lower)
         if ("ABCDabcd".indexOf(first) >= 0) return String.valueOf(Character.toUpperCase(first));
         return "";
     }
 
     private String normalizeAnswer(String text) {
-        // Базовая нормализация: нижний регистр, убрать финальные знаки препинания
         String t = text.toLowerCase().trim().replaceAll("[.!?,;]+$", "");
-        // Normalize decimal separator (comma → dot) for Russian locale input
         String normalized = t.replace(',', '.');
         try {
             double d = Double.parseDouble(normalized);
-            // Avoid "3.0" != "3" mismatch
             if (d == Math.floor(d) && !Double.isInfinite(d) && Math.abs(d) < 1e15) {
                 return String.valueOf((long) d);
             }
@@ -389,10 +457,44 @@ public class FormService {
         }).collect(Collectors.toList());
     }
 
-    private SubmissionResponse toSubmissionResponse(StudentSubmission s, int variantIndex) {
-        return new SubmissionResponse(s.getId(), s.getAssignmentId(), s.getVariantId(),
+    private SubmissionResponse toSubmissionResponse(StudentSubmission s, int variantIndex, List<Task> tasks) {
+        List<AttachmentInfoResponse> attachments = attachmentRepository.findMetadataBySubmissionId(s.getId());
+        return new SubmissionResponse(
+                s.getId(), s.getAssignmentId(), s.getVariantId(),
                 variantIndex, s.getStudentName(), s.getAnswersJson(),
-                s.getAutoScore(), s.getTeacherReview(), s.getSubmittedAt());
+                s.getAutoScore(), s.getTeacherReview(), s.getSubmittedAt(),
+                buildCorrectAnswersJson(tasks),
+                buildTasksJson(tasks),
+                toJson(attachments)
+        );
+    }
+
+    private String buildTasksJson(List<Task> tasks) {
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (Task task : tasks) {
+            Map<String, Object> entry = new LinkedHashMap<>();
+            entry.put("taskId", task.getId().toString());
+            entry.put("text", task.getText());
+            entry.put("taskType", task.getTaskType() != null ? task.getTaskType().name() : "EXERCISE");
+            entry.put("index", task.getIndexInVariant());
+            list.add(entry);
+        }
+        return toJson(list);
+    }
+
+    private String buildCorrectAnswersJson(List<Task> tasks) {
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (Task task : tasks) {
+            if (task.getTaskType() == Project.TaskType.OPEN_QUESTION) continue;
+            String expected = getExpectedAnswer(task);
+            if (expected == null || expected.isBlank()) expected = task.getAnswer();
+            if (expected == null || expected.isBlank()) continue;
+            Map<String, Object> entry = new LinkedHashMap<>();
+            entry.put("taskId", task.getId().toString());
+            entry.put("expectedAnswer", expected);
+            list.add(entry);
+        }
+        return toJson(list);
     }
 
     private String generateToken() {

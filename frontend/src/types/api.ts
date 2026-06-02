@@ -205,10 +205,30 @@ export type AutoScoreEntry = {
   correct: boolean | null;
 };
 
+export type CorrectAnswerEntry = {
+  taskId: string;
+  expectedAnswer: string;
+};
+
 export type TeacherReviewEntry = {
   taskId: string;
   comment?: string;
   grade?: string;
+  overrideCorrect?: boolean | null;
+};
+
+export type AttachmentInfo = {
+  id: string;
+  fileName: string;
+  mimeType: string;
+  fileSize: number;
+};
+
+export type SubmissionTask = {
+  taskId: string;
+  text: string;
+  taskType: string;
+  index: number;
 };
 
 export type Submission = {
@@ -221,6 +241,9 @@ export type Submission = {
   autoScore?: string;
   teacherReview?: string;
   submittedAt: string;
+  correctAnswersJson?: string;
+  tasksJson?: string;
+  attachmentsJson?: string;
 };
 
 export type CreateFormAssignmentRequest = {

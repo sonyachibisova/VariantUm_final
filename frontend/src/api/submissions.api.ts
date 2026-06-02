@@ -6,6 +6,7 @@ import type {
   SubmitAnswersRequest,
   Submission,
   TeacherReviewEntry,
+  AttachmentInfo,
 } from '../types/api';
 
 // Публичный клиент для эндпоинтов без авторизации (/form/*)
@@ -36,4 +37,15 @@ export const submissionsApi = {
 
   saveReview: (submissionId: string, taskReviews: TeacherReviewEntry[]) =>
     apiClient.patch<Submission>(`/submissions/${submissionId}/review`, { taskReviews }).then((r) => r.data),
+
+  uploadAttachment: (token: string, submissionId: string, file: File) => {
+    const fd = new FormData();
+    fd.append('file', file);
+    return publicClient.post<AttachmentInfo>(
+      `/form/${token}/submissions/${submissionId}/attachments`, fd,
+    ).then((r) => r.data);
+  },
+
+  getAttachmentUrl: (submissionId: string, attachmentId: string): string =>
+    `${import.meta.env.VITE_API_BASE_URL ?? '/api'}/submissions/${submissionId}/attachments/${attachmentId}`,
 };

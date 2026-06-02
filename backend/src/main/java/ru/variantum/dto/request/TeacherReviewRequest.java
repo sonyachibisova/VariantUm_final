@@ -1,8 +1,9 @@
 package ru.variantum.dto.request;
 
 import java.util.List;
-import java.util.UUID;
 
 public record TeacherReviewRequest(List<TaskReview> taskReviews) {
-    public record TaskReview(UUID taskId, String comment, String grade) {}
+    // taskId — строка, не UUID: задачи передаются как UUID-строки,
+    // общая оценка — специальный ключ "__OVERALL__"
+    public record TaskReview(String taskId, String comment, String grade, Boolean overrideCorrect) {}
 }

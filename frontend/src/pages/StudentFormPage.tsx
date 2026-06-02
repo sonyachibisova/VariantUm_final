@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { submissionsApi } from '../api/submissions.api';
@@ -8,23 +8,97 @@ import type { PublicTask, TaskAnswer } from '../types/api';
 
 const LP = "'Littera Plain', sans-serif";
 
-// Парсим варианты А)/Б)/В)/Г) из текста задания-теста
+const INPUT_STYLE: React.CSSProperties = {
+  width: '100%', padding: '10px 12px', border: '1.5px solid #e5e7eb',
+  borderRadius: '10px', fontFamily: LP, fontSize: '15px', color: '#222',
+  outline: 'none', boxSizing: 'border-box',
+};
+
+// ── Парсим варианты А)/Б)/В)/Г) из текста задания-теста ───────────────────
 function parseTestOptions(text: string): string[] {
   const matches = text.match(/[А-ГA-D]\)\s*[^\nА-ГA-D]+/gu);
   if (matches && matches.length >= 2) return matches.map(m => m.trim());
   return [];
 }
 
-function TaskInput({
-  task,
-  answer,
-  onChange,
+// ── Детектируем подпункты а)/б)/в) в тексте задания ──────────────────────
+function detectSubParts(text: string): string[] {
+  const order = 'абвгд';
+  const found: string[] = [];
+  for (const letter of order) {
+    if (text.includes(`${letter})`)) found.push(letter);
+  }
+  return found.length >= 2 ? found : [];
+}
+
+// ── Предпросмотр LaTeX-формулы ────────────────────────────────────────────
+function MathPreview({ value }: { value: string }) {
+  if (!value.trim() || (!value.includes('$') && !value.includes('\\'))) return null;
+  return (
+    <div style={{
+      marginTop: '6px', padding: '6px 10px',
+      background: '#f0fdf4', border: '1px solid #d1fae5',
+      borderRadius: '8px', fontSize: '14px',
+    }}>
+      <span style={{ fontSize: '11px', color: '#6b7280', marginRight: '8px', fontFamily: LP }}>Предпросмотр:</span>
+      <MathText>{value}</MathText>
+    </div>
+  );
+}
+
+// ── Поля ввода для задания с несколькими частями (а/б/в) ──────────────────
+function MultiPartInput({
+  subParts, answer, onChange, hint,
 }: {
-  task: PublicTask;
-  answer: string;
-  onChange: (v: string) => void;
+  subParts: string[]; answer: string; onChange: (v: string) => void; hint?: string | null;
+}) {
+  const [subAnswers, setSubAnswers] = useState<Record<string, string>>(() => {
+    const parts = answer ? answer.split(';').map(s => s.trim()) : [];
+    return Object.fromEntries(subParts.map((l, i) => [l, parts[i] ?? '']));
+  });
+
+  const handleChange = (letter: string, val: string) => {
+    const updated = { ...subAnswers, [letter]: val };
+    setSubAnswers(updated);
+    onChange(subParts.map(l => updated[l] ?? '').join('; '));
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      {subParts.map(letter => (
+        <div key={letter}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+            <span style={{ fontFamily: LP, fontSize: '15px', fontWeight: 700, color: '#374151', paddingTop: '10px', minWidth: '22px' }}>{letter})</span>
+            <div style={{ flex: 1 }}>
+              <input
+                type="text"
+                value={subAnswers[letter] ?? ''}
+                onChange={(e) => handleChange(letter, e.target.value)}
+                placeholder="Введите ответ..."
+                style={INPUT_STYLE}
+                onFocus={(e) => (e.target.style.borderColor = '#21a038')}
+                onBlur={(e) => (e.target.style.borderColor = '#e5e7eb')}
+              />
+              <MathPreview value={subAnswers[letter] ?? ''} />
+            </div>
+          </div>
+          {hint && (
+            <p style={{ marginLeft: '32px', marginTop: '4px', fontSize: '12px', color: '#9ca3af', fontFamily: LP }}>
+              Формат ответа: {hint}
+            </p>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ── Компонент ввода для одного задания ────────────────────────────────────
+function TaskInput({ task, answer, onChange }: {
+  task: PublicTask; answer: string; onChange: (v: string) => void;
 }) {
   const type = task.taskType ?? 'EXERCISE';
+  const hint = task.answerHint;
 
   if (type === 'TEST') {
     const options = parseTestOptions(task.text);
@@ -34,16 +108,12 @@ function TaskInput({
           {options.map((opt) => {
             const label = opt.split(')')[0].trim() + ')';
             return (
-              <label
-                key={opt}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: '10px',
-                  cursor: 'pointer', padding: '8px 12px',
-                  borderRadius: '10px', border: `1.5px solid ${answer === label ? '#21a038' : '#e5e7eb'}`,
-                  background: answer === label ? '#f0faf2' : '#fafafa',
-                  transition: 'all 0.15s',
-                }}
-              >
+              <label key={opt} style={{
+                display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer',
+                padding: '8px 12px', borderRadius: '10px',
+                border: `1.5px solid ${answer === label ? '#21a038' : '#e5e7eb'}`,
+                background: answer === label ? '#f0faf2' : '#fafafa', transition: 'all 0.15s',
+              }}>
                 <input
                   type="radio"
                   name={`task-${task.taskId}`}
@@ -81,25 +151,110 @@ function TaskInput({
     );
   }
 
+  const subParts = detectSubParts(task.text);
+  if (subParts.length >= 2) {
+    return <MultiPartInput subParts={subParts} answer={answer} onChange={onChange} hint={hint} />;
+  }
+
   return (
-    <input
-      type="text"
-      value={answer}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder="Введите ответ..."
-      style={{
-        width: '100%', padding: '10px 12px', border: '1.5px solid #e5e7eb',
-        borderRadius: '10px', fontFamily: LP, fontSize: '15px', color: '#222',
-        outline: 'none', boxSizing: 'border-box',
-      }}
-      onFocus={(e) => (e.target.style.borderColor = '#21a038')}
-      onBlur={(e) => (e.target.style.borderColor = '#e5e7eb')}
-    />
+    <div>
+      <input
+        type="text"
+        value={answer}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder="Введите ответ..."
+        style={INPUT_STYLE}
+        onFocus={(e) => (e.target.style.borderColor = '#21a038')}
+        onBlur={(e) => (e.target.style.borderColor = '#e5e7eb')}
+      />
+      <MathPreview value={answer} />
+      {hint && (
+        <p style={{ marginTop: '6px', fontSize: '12px', color: '#9ca3af', fontFamily: LP }}>
+          Формат ответа: {hint}
+        </p>
+      )}
+    </div>
   );
 }
 
+// ── Диалог подтверждения сдачи ────────────────────────────────────────────
+function ConfirmDialog({
+  unfilledCount,
+  filesCount,
+  onConfirm,
+  onCancel,
+}: {
+  unfilledCount: number;
+  filesCount: number;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, background: 'rgba(0,0,0,.45)',
+      zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px',
+    }}>
+      <div style={{
+        background: '#fff', borderRadius: '20px', padding: '32px 28px',
+        maxWidth: '400px', width: '100%', boxShadow: '0 8px 40px rgba(0,0,0,.18)',
+      }}>
+        <h3 style={{ fontFamily: LP, fontSize: '18px', fontWeight: 700, color: '#111', marginBottom: '14px' }}>
+          Сдать работу?
+        </h3>
+
+        {unfilledCount > 0 && (
+          <div style={{
+            background: '#fff7ed', border: '1px solid #fed7aa',
+            borderRadius: '10px', padding: '10px 14px', marginBottom: '14px',
+          }}>
+            <p style={{ fontFamily: LP, fontSize: '14px', color: '#92400e' }}>
+              Не заполнено {unfilledCount} {unfilledCount === 1 ? 'задание' : unfilledCount < 5 ? 'задания' : 'заданий'}.
+              После сдачи изменить ответы нельзя.
+            </p>
+          </div>
+        )}
+
+        {filesCount > 0 && (
+          <p style={{ fontFamily: LP, fontSize: '14px', color: '#555', marginBottom: '14px' }}>
+            Прикреплено файлов: {filesCount}
+          </p>
+        )}
+
+        {unfilledCount === 0 && filesCount === 0 && (
+          <p style={{ fontFamily: LP, fontSize: '14px', color: '#555', marginBottom: '14px' }}>
+            После сдачи изменить ответы нельзя.
+          </p>
+        )}
+
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <button
+            onClick={onCancel}
+            style={{
+              flex: 1, padding: '11px', border: '1.5px solid #e5e7eb', borderRadius: '12px',
+              fontFamily: LP, fontSize: '15px', background: '#fff', cursor: 'pointer', color: '#555',
+            }}
+          >
+            Вернуться
+          </button>
+          <button
+            onClick={onConfirm}
+            style={{
+              flex: 2, padding: '11px', background: '#21a038', color: '#fff', border: 'none',
+              borderRadius: '12px', fontFamily: LP, fontSize: '15px', fontWeight: 700, cursor: 'pointer',
+            }}
+          >
+            Сдать
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Основная страница ─────────────────────────────────────────────────────
 export function StudentFormPage() {
   const { token } = useParams<{ token: string }>();
+  const storageKey = `va_form_${token}`;
 
   const [step, setStep] = useState<'name' | 'tasks' | 'done' | 'already_submitted'>('name');
   const [nameInput, setNameInput] = useState('');
@@ -113,6 +268,11 @@ export function StudentFormPage() {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  // Файлы (до 3)
+  const [stagedFiles, setStagedFiles] = useState<File[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: formInfo, isLoading, isError } = useQuery({
     queryKey: ['form', token],
@@ -121,7 +281,21 @@ export function StudentFormPage() {
     retry: 1,
   });
 
-  // Если токен ведёт сразу на вариант — сохраняем задания, но оставляем шаг ввода имени
+  // Восстановление ответов из localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem(storageKey);
+    if (saved) {
+      try { setAnswers(JSON.parse(saved)); } catch {}
+    }
+  }, [storageKey]);
+
+  // Автосохранение ответов
+  useEffect(() => {
+    if (step === 'tasks' && Object.keys(answers).length > 0) {
+      localStorage.setItem(storageKey, JSON.stringify(answers));
+    }
+  }, [answers, step, storageKey]);
+
   useEffect(() => {
     if (formInfo?.tokenType === 'VARIANT' && step === 'name' && formInfo.tasks) {
       setTasks(formInfo.tasks);
@@ -155,20 +329,35 @@ export function StudentFormPage() {
   }
 
   async function handleSubmit() {
+    setShowConfirm(false);
     setSubmitError('');
     setSubmitting(true);
     const answersArr: TaskAnswer[] = tasks.map((t) => ({ taskId: t.taskId, answer: answers[t.taskId] ?? '' }));
     try {
-      await submissionsApi.submitAnswers(studentToken ?? token!, {
+      const submission = await submissionsApi.submitAnswers(studentToken ?? token!, {
         studentName: studentName || nameInput.trim() || 'Ученик',
         answers: answersArr,
       });
+      // Загружаем файлы (не блокируем done при ошибке загрузки)
+      if (stagedFiles.length > 0) {
+        await Promise.allSettled(
+          stagedFiles.map(f => submissionsApi.uploadAttachment(studentToken ?? token!, submission.id, f))
+        );
+      }
+      localStorage.removeItem(storageKey);
       setStep('done');
     } catch {
       setSubmitError('Не удалось отправить работу. Попробуйте ещё раз.');
     } finally {
       setSubmitting(false);
     }
+  }
+
+  function handleAddFiles(files: FileList | null) {
+    if (!files) return;
+    const newFiles = Array.from(files).filter(f => f.size <= 10 * 1024 * 1024);
+    setStagedFiles(prev => [...prev, ...newFiles].slice(0, 3));
+    if (fileInputRef.current) fileInputRef.current.value = '';
   }
 
   if (isLoading) {
@@ -190,8 +379,22 @@ export function StudentFormPage() {
     );
   }
 
+  // Прогресс: сколько заданий заполнено
+  const filledCount = tasks.filter(t => (answers[t.taskId] ?? '').trim().length > 0).length;
+  const unfilledCount = tasks.length - filledCount;
+  const progressPct = tasks.length > 0 ? (filledCount / tasks.length) * 100 : 0;
+
   return (
     <div style={{ minHeight: '100vh', background: '#f9fafb', fontFamily: LP }}>
+      {showConfirm && (
+        <ConfirmDialog
+          unfilledCount={unfilledCount}
+          filesCount={stagedFiles.length}
+          onConfirm={handleSubmit}
+          onCancel={() => setShowConfirm(false)}
+        />
+      )}
+
       {/* Header */}
       <header style={{
         background: '#fff', borderBottom: '1px solid #e5e7eb',
@@ -201,12 +404,11 @@ export function StudentFormPage() {
       </header>
 
       <main style={{ maxWidth: '680px', margin: '0 auto', padding: '32px 20px' }}>
-        {/* Project title */}
         <h1 style={{ fontSize: '22px', fontWeight: 700, color: '#111', marginBottom: '8px' }}>
           {formInfo.projectTitle}
         </h1>
 
-        {/* ── Шаг 1а: ввод имени (VARIANT — прямая ссылка) ── */}
+        {/* ── Шаг 1а: VARIANT ── */}
         {step === 'name' && formInfo.tokenType === 'VARIANT' && (
           <div style={{ background: '#fff', borderRadius: '16px', padding: '28px', boxShadow: '0 2px 12px rgba(0,0,0,.06)', marginTop: '24px' }}>
             <p style={{ fontSize: '16px', color: '#555', marginBottom: '20px' }}>
@@ -229,18 +431,14 @@ export function StudentFormPage() {
             </div>
             <button
               onClick={handleVariantNameProceed}
-              style={{
-                width: '100%', padding: '13px', background: '#21a038',
-                color: '#fff', border: 'none', borderRadius: '12px', fontSize: '16px', fontWeight: 700,
-                cursor: 'pointer', transition: 'background 0.15s',
-              }}
+              style={{ width: '100%', padding: '13px', background: '#21a038', color: '#fff', border: 'none', borderRadius: '12px', fontSize: '16px', fontWeight: 700, cursor: 'pointer' }}
             >
               Начать
             </button>
           </div>
         )}
 
-        {/* ── Шаг 1б: ввод имени (CLASS_LIST) ── */}
+        {/* ── Шаг 1б: CLASS_LIST ── */}
         {step === 'name' && formInfo.tokenType === 'CLASS_LIST' && (
           <div style={{ background: '#fff', borderRadius: '16px', padding: '28px', boxShadow: '0 2px 12px rgba(0,0,0,.06)', marginTop: '24px' }}>
             <p style={{ fontSize: '16px', color: '#555', marginBottom: '20px' }}>
@@ -267,7 +465,7 @@ export function StudentFormPage() {
               style={{
                 width: '100%', padding: '13px', background: resolving ? '#9ca3af' : '#21a038',
                 color: '#fff', border: 'none', borderRadius: '12px', fontSize: '16px', fontWeight: 700,
-                cursor: resolving ? 'not-allowed' : 'pointer', transition: 'background 0.15s',
+                cursor: resolving ? 'not-allowed' : 'pointer',
               }}
             >
               {resolving ? 'Поиск...' : 'Найти мой вариант'}
@@ -278,21 +476,31 @@ export function StudentFormPage() {
         {/* ── Шаг 2: задания ── */}
         {step === 'tasks' && (
           <div style={{ marginTop: '24px' }}>
-            <p style={{ fontSize: '14px', color: '#888', marginBottom: '20px' }}>
-              Вариант {variantIndex}{studentName ? ` · ${studentName}` : ''}
-            </p>
+            {/* Прогресс */}
+            <div style={{ marginBottom: '20px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                <p style={{ fontSize: '14px', color: '#888' }}>
+                  Вариант {variantIndex}{studentName ? ` · ${studentName}` : ''}
+                </p>
+                <p style={{ fontSize: '13px', color: '#888' }}>
+                  {filledCount} / {tasks.length} заданий
+                </p>
+              </div>
+              <div style={{ height: '4px', background: '#e5e7eb', borderRadius: '2px', overflow: 'hidden' }}>
+                <div style={{
+                  height: '100%', background: '#21a038', borderRadius: '2px',
+                  width: `${progressPct}%`, transition: 'width 0.3s ease',
+                }} />
+              </div>
+            </div>
 
             {tasks.map((task, idx) => (
-              <div
-                key={task.taskId}
-                style={{
-                  background: '#fff', borderRadius: '16px', padding: '24px',
-                  boxShadow: '0 2px 10px rgba(0,0,0,.05)', marginBottom: '16px',
-                }}
-              >
+              <div key={task.taskId} style={{
+                background: '#fff', borderRadius: '16px', padding: '24px',
+                boxShadow: '0 2px 10px rgba(0,0,0,.05)', marginBottom: '16px',
+              }}>
                 <p style={{ fontSize: '12px', color: '#9ca3af', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '10px' }}>
-                  Задание {idx + 1}
-                  {task.estimatedMinutes ? ` · ~${task.estimatedMinutes} мин` : ''}
+                  Задание {idx + 1}{task.estimatedMinutes ? ` · ~${task.estimatedMinutes} мин` : ''}
                 </p>
                 <div style={{ marginBottom: '16px' }}>
                   <RichText>{task.text}</RichText>
@@ -302,26 +510,76 @@ export function StudentFormPage() {
                   answer={answers[task.taskId] ?? ''}
                   onChange={(v) => setAnswers((prev) => ({ ...prev, [task.taskId]: v }))}
                 />
-                {task.answerHint && (
-                  <p style={{ marginTop: '6px', fontSize: '12px', color: '#9ca3af', fontFamily: LP }}>
-                    Формат ответа: {task.answerHint}
-                  </p>
-                )}
               </div>
             ))}
+
+            {/* Прикрепить файлы */}
+            <div style={{
+              background: '#fff', borderRadius: '16px', padding: '20px 24px',
+              boxShadow: '0 2px 10px rgba(0,0,0,.05)', marginBottom: '16px',
+            }}>
+              <p style={{ fontSize: '14px', fontWeight: 600, color: '#555', marginBottom: '10px' }}>
+                Прикрепить фото или файл к работе{' '}
+                <span style={{ fontWeight: 400, color: '#9ca3af' }}>(необязательно, до 3 файлов, до 10 МБ)</span>
+              </p>
+
+              {stagedFiles.length < 3 && (
+                <>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    multiple
+                    accept="image/*,.pdf"
+                    onChange={(e) => handleAddFiles(e.target.files)}
+                    style={{ display: 'none' }}
+                    id="file-input"
+                  />
+                  <label
+                    htmlFor="file-input"
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', gap: '6px',
+                      padding: '8px 16px', border: '1.5px dashed #d1d5db',
+                      borderRadius: '10px', color: '#6b7280', fontSize: '14px',
+                      cursor: 'pointer', fontFamily: LP,
+                    }}
+                  >
+                    + Добавить файл
+                  </label>
+                </>
+              )}
+
+              {stagedFiles.map((f, i) => (
+                <div key={i} style={{
+                  display: 'flex', alignItems: 'center', gap: '10px',
+                  padding: '8px 12px', background: '#f9fafb', borderRadius: '10px', marginTop: '8px',
+                }}>
+                  <span style={{ fontSize: '20px' }}>
+                    {f.type.startsWith('image/') ? '🖼' : f.type === 'application/pdf' ? '📄' : '📎'}
+                  </span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontSize: '13px', color: '#374151', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{f.name}</p>
+                    <p style={{ fontSize: '12px', color: '#9ca3af' }}>{(f.size / 1024).toFixed(0)} КБ</p>
+                  </div>
+                  <button
+                    onClick={() => setStagedFiles(prev => prev.filter((_, j) => j !== i))}
+                    style={{ background: 'none', border: 'none', color: '#9ca3af', cursor: 'pointer', fontSize: '20px', lineHeight: 1, padding: '0 4px' }}
+                  >×</button>
+                </div>
+              ))}
+            </div>
 
             {submitError && (
               <p style={{ color: '#e53e3e', textAlign: 'center', marginBottom: '12px' }}>{submitError}</p>
             )}
 
             <button
-              onClick={handleSubmit}
+              onClick={() => setShowConfirm(true)}
               disabled={submitting}
               style={{
-                width: '100%', padding: '14px', background: submitting ? '#9ca3af' : '#21a038',
+                width: '100%', padding: '14px',
+                background: submitting ? '#9ca3af' : '#21a038',
                 color: '#fff', border: 'none', borderRadius: '14px', fontSize: '17px', fontWeight: 700,
-                cursor: submitting ? 'not-allowed' : 'pointer', transition: 'background 0.15s',
-                marginTop: '8px',
+                cursor: submitting ? 'not-allowed' : 'pointer', marginTop: '8px',
               }}
             >
               {submitting ? 'Отправляю...' : 'Сдать работу'}
@@ -329,37 +587,23 @@ export function StudentFormPage() {
           </div>
         )}
 
-        {/* ── Шаг: уже сдано ── */}
+        {/* ── Уже сдано ── */}
         {step === 'already_submitted' && (
-          <div style={{
-            marginTop: '48px', textAlign: 'center',
-            background: '#fff', borderRadius: '20px', padding: '48px 32px',
-            boxShadow: '0 2px 16px rgba(0,0,0,.07)',
-          }}>
+          <div style={{ marginTop: '48px', textAlign: 'center', background: '#fff', borderRadius: '20px', padding: '48px 32px', boxShadow: '0 2px 16px rgba(0,0,0,.07)' }}>
             <div style={{ fontSize: '56px', marginBottom: '20px' }}>📋</div>
-            <h2 style={{ fontSize: '22px', fontWeight: 700, color: '#111', marginBottom: '10px' }}>
-              Работа уже сдана
-            </h2>
+            <h2 style={{ fontSize: '22px', fontWeight: 700, color: '#111', marginBottom: '10px' }}>Работа уже сдана</h2>
             <p style={{ color: '#555', fontSize: '16px' }}>
               {studentName ? `${studentName}, вы` : 'Вы'} уже отправили эту работу. Учитель проверит её.
             </p>
           </div>
         )}
 
-        {/* ── Шаг 3: готово ── */}
+        {/* ── Готово ── */}
         {step === 'done' && (
-          <div style={{
-            marginTop: '48px', textAlign: 'center',
-            background: '#fff', borderRadius: '20px', padding: '48px 32px',
-            boxShadow: '0 2px 16px rgba(0,0,0,.07)',
-          }}>
+          <div style={{ marginTop: '48px', textAlign: 'center', background: '#fff', borderRadius: '20px', padding: '48px 32px', boxShadow: '0 2px 16px rgba(0,0,0,.07)' }}>
             <div style={{ fontSize: '56px', marginBottom: '20px' }}>✅</div>
-            <h2 style={{ fontSize: '24px', fontWeight: 700, color: '#111', marginBottom: '10px' }}>
-              Работа сдана!
-            </h2>
-            <p style={{ color: '#555', fontSize: '16px' }}>
-              Спасибо! Учитель проверит вашу работу.
-            </p>
+            <h2 style={{ fontSize: '24px', fontWeight: 700, color: '#111', marginBottom: '10px' }}>Работа сдана!</h2>
+            <p style={{ color: '#555', fontSize: '16px' }}>Спасибо! Учитель проверит вашу работу.</p>
           </div>
         )}
       </main>

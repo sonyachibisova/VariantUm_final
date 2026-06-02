@@ -12,5 +12,8 @@ public record SubmissionResponse(
         String answersJson,
         String autoScore,
         String teacherReview,
-        OffsetDateTime submittedAt
+        OffsetDateTime submittedAt,
+        String correctAnswersJson,
+        String tasksJson,        // [{taskId, text, taskType, index}] для всех заданий варианта
+        String attachmentsJson   // [{id, fileName, mimeType, fileSize}]
 ) {}

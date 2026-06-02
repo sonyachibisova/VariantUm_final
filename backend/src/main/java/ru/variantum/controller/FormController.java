@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ru.variantum.dto.request.*;
 import ru.variantum.dto.response.*;
 import ru.variantum.security.CurrentUser;
@@ -42,7 +43,23 @@ public class FormController {
         return formService.submitAnswers(token, req);
     }
 
+    /** Загрузка вложения от ученика — до 3 файлов на работу. */
+    @PostMapping("/form/{token}/submissions/{submissionId}/attachments")
+    public AttachmentInfoResponse uploadAttachment(
+            @PathVariable String token,
+            @PathVariable UUID submissionId,
+            @RequestParam("file") MultipartFile file) {
+        return formService.uploadAttachment(token, submissionId, file);
+    }
+
     // ── Приватные endpoints (JWT) ─────────────────────────────────────────────
+
+    @GetMapping("/submissions/{submissionId}/attachments/{attachmentId}")
+    public ResponseEntity<byte[]> getAttachment(
+            @PathVariable UUID submissionId,
+            @PathVariable UUID attachmentId) {
+        return formService.getAttachment(submissionId, attachmentId, CurrentUser.requireId());
+    }
 
     @PostMapping("/projects/{projectId}/forms")
     public ResponseEntity<FormAssignmentResponse> createAssignment(

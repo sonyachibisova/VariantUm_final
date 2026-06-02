@@ -853,6 +853,11 @@ export function EditorPage() {
 
   const checkedCount = variationOptions.filter(o => o.checked).length;
 
+  function handleSetVariantCount(v: number) {
+    if (!referenceDraft) return;
+    setReferenceDraft({ ...referenceDraft, variantCount: v });
+  }
+
   // Производные значения анализа (с безопасными фолбэками)
   const subjectCode = analysis && KNOWN_SUBJECTS.has(analysis.subject) ? analysis.subject : 'other';
   const subjectLabel = SUBJECT_LABELS[subjectCode];
@@ -1261,6 +1266,40 @@ export function EditorPage() {
               </div>
             </div>
             <Toggle checked={checkDuplicates} onChange={setCheckDuplicates} />
+          </div>
+        </div>
+      </div>
+
+      {/* ── Количество вариантов ─────────────────────────────────────── */}
+      <div className="border border-gray-200 rounded-2xl overflow-hidden mb-6">
+        <div className="px-5 pt-4 pb-5">
+          <p className="text-sm font-semibold text-gray-700 mb-0.5">Количество вариантов</p>
+          <p className="text-xs text-gray-400 mb-4">Сколько вариантов сгенерировать для комплекта</p>
+          <div className="flex items-center gap-3 flex-wrap">
+            <button
+              onClick={() => handleSetVariantCount(Math.max(2, genVariantCount - 1))}
+              disabled={genVariantCount <= 2}
+              className="w-9 h-9 rounded-xl border border-gray-300 bg-white text-gray-600 font-bold text-lg flex items-center justify-center hover:border-gray-400 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+            >−</button>
+            <span className="text-2xl font-bold text-gray-800 w-8 text-center">{genVariantCount}</span>
+            <button
+              onClick={() => handleSetVariantCount(Math.min(10, genVariantCount + 1))}
+              disabled={genVariantCount >= 10}
+              className="w-9 h-9 rounded-xl border border-gray-300 bg-white text-gray-600 font-bold text-lg flex items-center justify-center hover:border-gray-400 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+            >+</button>
+            <div className="flex gap-1.5 ml-2">
+              {[2, 3, 4, 5].map(v => (
+                <button
+                  key={v}
+                  onClick={() => handleSetVariantCount(v)}
+                  className={`w-9 h-9 rounded-xl border transition-all text-sm font-bold ${
+                    genVariantCount === v
+                      ? 'bg-[#22a139] text-white border-[#22a139]'
+                      : 'bg-white text-gray-600 border-gray-300 hover:border-gray-400'
+                  }`}
+                >{v}</button>
+              ))}
+            </div>
           </div>
         </div>
       </div>

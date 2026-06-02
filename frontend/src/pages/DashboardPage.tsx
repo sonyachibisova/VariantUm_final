@@ -6,6 +6,7 @@ import { useAuthStore } from '../store/authStore';
 import { authApi } from '../api/auth.api';
 import { useTour } from '../context/TourContext';
 import { buildFullTour, buildTourFromPage } from '../tour/paths/choicePath';
+import { LimitsBadge } from '../components/LimitsBadge';
 import './DashboardPage.css';
 
 const LP = "'Littera Plain', sans-serif";
@@ -342,6 +343,11 @@ export function DashboardPage() {
                   </button>
                 ))}
               </nav>
+              {user && (
+                <div style={{ padding: '16px 20px', borderTop: '1px solid #f0f0f0' }}>
+                  <LimitsBadge scale={1} />
+                </div>
+              )}
             </div>
           </>
         )}
@@ -558,7 +564,9 @@ export function DashboardPage() {
           </div>
 
           {/* Пользователь справа */}
-          <div ref={menuRef} style={{ marginLeft: 'auto', position: 'relative', flexShrink: 0 }}>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '16px', flexShrink: 0 }}>
+            {user && <LimitsBadge scale={1} />}
+            <div ref={menuRef} style={{ position: 'relative' }}>
             {user && (
               <>
                 <button
@@ -616,6 +624,7 @@ export function DashboardPage() {
                 )}
               </>
             )}
+            </div>
           </div>
           </div>{/* end header pill */}
         </div>{/* end scaled wrapper */}
