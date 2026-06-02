@@ -910,7 +910,7 @@ function ExportDialog({ projectId, defaultName, onClose }: { projectId: string; 
   const [format, setFormat] = useState<'PDF' | 'DOCX'>('PDF');
   const [layoutIdx, setLayoutIdx] = useState(0);
   const [includeAnswers, setIncludeAnswers] = useState(true);
-  const [includeCriteria, setIncludeCriteria] = useState(false);
+  const [includeCriteria] = useState(false);
   const [showDifficulty, setShowDifficulty] = useState(false);
   const [includeKitName, setIncludeKitName] = useState(false);
   const [kitName, setKitName] = useState('');
@@ -1062,7 +1062,6 @@ function ExportDialog({ projectId, defaultName, onClose }: { projectId: string; 
           {/* Чекбоксы */}
           <div className="space-y-3 pt-1">
             <CheckRow checked={includeAnswers} onChange={setIncludeAnswers} label="Добавить раздел с ответами (для учителя)" />
-            <CheckRow checked={includeCriteria} onChange={setIncludeCriteria} label="Добавить критерии оценивания" />
             <CheckRow checked={showDifficulty} onChange={setShowDifficulty} label="Показывать уровень сложности у каждого варианта" />
           </div>
 

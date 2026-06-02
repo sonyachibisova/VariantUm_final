@@ -16,6 +16,21 @@ const IMAGE_RE = /\[ИЗОБРАЖЕНИЕ:\s*([^\]]+?)\s*\]/g;
  * Если в тексте несколько вариантов ответа (А), Б), В), Г)) написаны в одну строку,
  * разбивает их на отдельные строки. Работает для русских (А-Г) и латинских (A-D) маркеров.
  */
+/**
+ * Превращает «сырые» спецсимволы, оставшиеся в тексте от LLM, в нормальное оформление:
+ *  - литеральные \r\n, \n → реальные переносы строк;
+ *  - \t → пробел; одиночный \r убираем.
+ * НЕ трогаем последовательности, за которыми идёт латинская буква (это может быть LaTeX:
+ * \neq, \nu, \not, \tan, \theta, \rho и т.п.).
+ */
+function normalizeStrayEscapes(text: string): string {
+  return text
+    .replace(/\\r\\n/g, '\n')
+    .replace(/\\n(?![A-Za-z])/g, '\n')
+    .replace(/\\t(?![A-Za-z])/g, ' ')
+    .replace(/\\r(?![A-Za-z])/g, '');
+}
+
 function expandTestOptions(text: string): string {
   // Проверяем, есть ли 2+ маркера ответа на одной строке
   // Паттерн: маркер вида А) или A) внутри строки (не в начале строки)
@@ -135,7 +150,7 @@ export function RichText({
   // Поле figure сохраняется в DB, но в UI не рисуется
   figure?: Record<string, unknown> | null;
 }) {
-  const text = children ?? '';
+  const text = normalizeStrayEscapes(children ?? '');
   const nodes: ReactNode[] = [];
   let key = 0;
 

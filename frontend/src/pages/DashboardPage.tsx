@@ -6,6 +6,7 @@ import { useAuthStore } from '../store/authStore';
 import { authApi } from '../api/auth.api';
 import { useTour } from '../context/TourContext';
 import { buildFullTour, buildTourFromPage } from '../tour/paths/choicePath';
+import { LimitsBadge } from '../components/LimitsBadge';
 import './DashboardPage.css';
 
 const LP = "'Littera Plain', sans-serif";
@@ -558,7 +559,9 @@ export function DashboardPage() {
           </div>
 
           {/* Пользователь справа */}
-          <div ref={menuRef} style={{ marginLeft: 'auto', position: 'relative', flexShrink: 0 }}>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '16px', flexShrink: 0 }}>
+          {user && <LimitsBadge />}
+          <div ref={menuRef} style={{ position: 'relative', flexShrink: 0 }}>
             {user && (
               <>
                 <button
@@ -616,6 +619,7 @@ export function DashboardPage() {
                 )}
               </>
             )}
+          </div>
           </div>
           </div>{/* end header pill */}
         </div>{/* end scaled wrapper */}

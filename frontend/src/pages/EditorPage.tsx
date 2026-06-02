@@ -659,6 +659,9 @@ export function EditorPage() {
 
   // Разбиение текста на задания силами GigaChat (надёжнее регулярок)
   const [splitting, setSplitting] = useState(true);
+  // Текст, который уже разбит — чтобы не запускать разбиение повторно на тех же данных
+  // (повторный прогон мог перезаписывать корректный результат другим).
+  const lastSplitTextRef = useRef<string | null>(null);
 
   // Авто-анализ задания (предмет, класс, тип, сложность)
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
@@ -718,23 +721,28 @@ export function EditorPage() {
   }, [tourActive, referenceDraft]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Разбиение текста на отдельные задания через GigaChat (при входе)
+  const referenceText = referenceDraft?.referenceText;
   useEffect(() => {
-    if (!referenceDraft) return;
+    if (!referenceText) return;
+    // Уже разбивали ровно этот текст — не запускаем повторно (иначе второй прогон
+    // мог перезаписать корректное разбиение менее удачным).
+    if (lastSplitTextRef.current === referenceText) return;
+    lastSplitTextRef.current = referenceText;
     let cancelled = false;
     setSplitting(true);
-    analyzeApi.split(referenceDraft.referenceText)
+    analyzeApi.split(referenceText)
       .then(split => {
         if (cancelled) return;
         const result = tasksFromSplit(split);
-        setTasks(result.length > 0 ? result : fallbackSplit(referenceDraft.referenceText));
+        setTasks(result.length > 0 ? result : fallbackSplit(referenceText));
       })
       .catch(() => {
         // LLM-разбиение недоступно — используем запасное разбиение по абзацам
-        if (!cancelled) setTasks(fallbackSplit(referenceDraft.referenceText));
+        if (!cancelled) setTasks(fallbackSplit(referenceText));
       })
       .finally(() => { if (!cancelled) setSplitting(false); });
     return () => { cancelled = true; };
-  }, [referenceDraft]);
+  }, [referenceText]);
 
   // Запуск анализа при входе
   useEffect(() => {
@@ -798,16 +806,6 @@ export function EditorPage() {
     setTasks(prev => prev.map(t => t.id === id ? { ...t, fullText: text } : t));
   }
 
-  /** Переразбивает все текущие задания по пустым строкам — кнопка для ручного использования. */
-  function resplitByParagraphs() {
-    const combined = tasks.map(t => t.fullText.trim()).join('\n\n');
-    const parts = combined.split(/\n[ \t]*\n/).map(s => s.trim()).filter(s => s.length > 20);
-    if (parts.length >= 2) {
-      setTasks(parts.map((p, i) => makeTask(i + 1, stripAnswerLines(p))));
-      setOpenId(null);
-    }
-  }
-
   /** Заново загружает исходные файлы на сервер (повторное OCR/Vision) и разбивает на задания. */
   async function reparseSourceFiles() {
     if (!referenceDraft?.sourceFiles?.length || reparsingFiles) return;
@@ -821,6 +819,8 @@ export function EditorPage() {
       }
       const newText = parts.join('\n\n').trim();
       if (!newText) return;
+      // Помечаем текст как уже разбираемый, чтобы эффект-разбиение не запустился повторно
+      lastSplitTextRef.current = newText;
       setReferenceDraft({ ...referenceDraft, referenceText: newText });
       setSplitting(true);
       try {
@@ -1088,22 +1088,6 @@ export function EditorPage() {
         </div>
       )}
 
-      {/* Подсказка: одно задание — предлагаем разбить вручную */}
-      {!splitting && tasks.length === 1 && tasks[0].fullText.includes('\n\n') && (
-        <div className="mb-3 flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
-          <span className="text-amber-500 text-base">⚠️</span>
-          <p className="text-sm text-amber-700 flex-1">
-            Похоже, в тексте несколько заданий. Если разбивка не сработала автоматически — попробуйте разбить по пустым строкам.
-          </p>
-          <button
-            onClick={resplitByParagraphs}
-            className="flex-shrink-0 text-xs font-semibold text-amber-700 border border-amber-300 rounded-lg px-3 py-1.5 hover:bg-amber-100 transition-colors"
-          >
-            Разбить по абзацам
-          </button>
-        </div>
-      )}
-
       {/* Исходный файл — сворачиваемый предпросмотр */}
       {referenceDraft?.sourceFiles && referenceDraft.sourceFiles.length > 0 && (
         <SourceFilesPreview files={referenceDraft.sourceFiles} />
@@ -1287,7 +1271,7 @@ export function EditorPage() {
       )}
       {generate.isPending && (
         <p className="text-center text-sm text-gray-400 mt-3">
-          GigaChat генерирует варианты — это займёт 10–30 секунд...
+          GigaChat генерирует варианты — это займёт 50–60 секунд...
         </p>
       )}
     </main>

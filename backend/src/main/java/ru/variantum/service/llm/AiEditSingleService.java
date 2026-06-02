@@ -30,14 +30,26 @@ public class AiEditSingleService {
     /**
      * Перегенерация одного задания: принимает JSON одного задания, возвращает новое задание
      * в той же структуре с другими числами/сюжетом но той же сложностью и типом.
+     *
+     * @param hasGraph true, если исходное задание содержало маркер [ФУНКЦИЯ:…] — модель
+     *                 обязана сгенерировать НОВЫЙ маркер с другими коэффициентами.
      */
     public GeneratedModels.GeneratedTask regenerateTask(String taskJson,
                                                         String subject,
-                                                        Integer grade) {
+                                                        Integer grade,
+                                                        boolean hasGraph) {
         Map<String, String> vars = new HashMap<>();
         vars.put("task_json", taskJson);
         vars.put("subject", subject != null ? subject : "");
         vars.put("grade", grade != null ? String.valueOf(grade) : "");
+        vars.put("graph_instruction", hasGraph
+                ? "КРИТИЧЕСКИ ВАЖНО — ГРАФИК ОБЯЗАТЕЛЕН: исходное задание содержит график функции.\n" +
+                  "Ты ОБЯЗАН включить в поле \"text\" нового задания маркер вида [ФУНКЦИЯ: {\"fn\":\"...\",\"xMin\":...,\"xMax\":...}].\n" +
+                  "Выбери НОВУЮ функцию с другими целочисленными коэффициентами (другая вершина/наклон/сдвиг),\n" +
+                  "чтобы график отличался от исходного и ответ изменился. Маркер [ФУНКЦИЯ:...] НЕ оборачивай в $...$.\n" +
+                  "fn: строка (^ для степени, *, +, -, /, sin, cos, sqrt, pi, e).\n" +
+                  "Пример: [ФУНКЦИЯ: {\"fn\":\"x^2-4*x+3\",\"xMin\":-1,\"xMax\":5}]"
+                : "");
 
         String prompt = promptBuilder.build(PromptBuilder.REGENERATE_TASK, vars);
         String raw = gigaChatClient
@@ -45,6 +57,13 @@ public class AiEditSingleService {
                 .block();
 
         return parseSingleTask(raw);
+    }
+
+    /** Обратная совместимость — без графика. */
+    public GeneratedModels.GeneratedTask regenerateTask(String taskJson,
+                                                        String subject,
+                                                        Integer grade) {
+        return regenerateTask(taskJson, subject, grade, false);
     }
 
     /**

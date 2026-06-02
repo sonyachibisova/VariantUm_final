@@ -223,8 +223,11 @@ public class VariantService {
         GeneratedModels.GeneratedTask gt = projectMapper.toGenerated(variant, List.of(target)).tasks().get(0);
         String taskJson = projectMapper.toJson(gt);
 
+        // Если исходное задание содержало график — требуем его и в перегенерированной версии.
+        boolean hasGraph = target.getText() != null && target.getText().contains("[ФУНКЦИЯ:");
+
         GeneratedModels.GeneratedTask newTask = aiEditSingleService.regenerateTask(
-                taskJson, project.getSubject(), project.getGrade());
+                taskJson, project.getSubject(), project.getGrade(), hasGraph);
 
         // Обновляем только целевое задание, все остальные трогать не нужно
         target.setText(ProjectService.cleanTaskText(newTask.text()));

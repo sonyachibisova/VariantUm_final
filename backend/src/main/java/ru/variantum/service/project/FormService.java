@@ -64,7 +64,8 @@ public class FormService {
             List<String> students = req.students() != null ? req.students() : List.of();
             studentResponses = addStudentsInternal(assignment.getId(), students, variants);
         } else {
-            for (Variant variant : variants) {
+            for (int i = 0; i < variants.size(); i++) {
+                Variant variant = variants.get(i);
                 FormVariantToken vt = FormVariantToken.builder()
                         .assignmentId(assignment.getId())
                         .variantId(variant.getId())
@@ -72,7 +73,7 @@ public class FormService {
                         .build();
                 formVariantTokenRepository.save(vt);
                 tokenResponses.add(new FormVariantTokenResponse(
-                        vt.getId(), variant.getId(), variant.getIndexInProject(), vt.getAccessToken()));
+                        vt.getId(), variant.getId(), i + 1, vt.getAccessToken()));
             }
         }
 
@@ -96,8 +97,7 @@ public class FormService {
 
         List<FormStudentResponse> allStudents = new ArrayList<>();
         for (FormStudent s : existing) {
-            int idx = variants.stream().filter(v -> v.getId().equals(s.getVariantId()))
-                    .findFirst().map(Variant::getIndexInProject).orElse(0);
+            int idx = positionInList(variants, s.getVariantId());
             allStudents.add(new FormStudentResponse(s.getId(), s.getFullName(), s.getVariantId(), idx, s.getAccessToken()));
         }
         allStudents.addAll(added);
@@ -114,7 +114,8 @@ public class FormService {
         for (String raw : names) {
             String name = raw.trim();
             if (name.isEmpty()) continue;
-            Variant variant = variants.get((offset + added) % variants.size());
+            int pos = (offset + added) % variants.size();
+            Variant variant = variants.get(pos);
             FormStudent student = FormStudent.builder()
                     .assignmentId(assignmentId)
                     .fullName(name)
@@ -123,7 +124,7 @@ public class FormService {
                     .build();
             formStudentRepository.save(student);
             responses.add(new FormStudentResponse(
-                    student.getId(), name, variant.getId(), variant.getIndexInProject(), student.getAccessToken()));
+                    student.getId(), name, variant.getId(), pos + 1, student.getAccessToken()));
             added++;
         }
         return responses;
@@ -171,14 +172,13 @@ public class FormService {
             throw new ResourceNotFoundException("Фамилия не найдена, попробуйте ещё раз");
         }
         FormStudent student = matches.get(0);
-        Variant variant = variantRepository.findById(student.getVariantId())
-                .orElseThrow(() -> new ResourceNotFoundException("Вариант не найден"));
         List<Task> tasks = taskRepository.findByVariantIdOrderByIndexInVariantAsc(student.getVariantId());
         boolean alreadySubmitted = studentSubmissionRepository
                 .existsByAssignmentIdAndStudentName(assignment.getId(), student.getFullName());
         return new ResolvedVariantResponse(
                 student.getId(), student.getFullName(), student.getVariantId(),
-                variant.getIndexInProject(), toPublicTasks(tasks), student.getAccessToken(),
+                variantDisplayNumber(assignment.getProjectId(), student.getVariantId()),
+                toPublicTasks(tasks), student.getAccessToken(),
                 alreadySubmitted);
     }
 
@@ -266,27 +266,42 @@ public class FormService {
 
     // ── Private helpers ───────────────────────────────────────────────────────────
 
+    /**
+     * 1-based порядковый номер варианта в проекте (по позиции в отсортированном списке).
+     * Не зависит от хранимого indexInProject, поэтому нумерация для учеников всегда начинается с 1
+     * и совпадает с нумерацией в редакторе учителя (idx + 1).
+     */
+    private int variantDisplayNumber(UUID projectId, UUID variantId) {
+        return positionInList(
+                variantRepository.findByProjectIdOrderByIndexInProjectAsc(projectId), variantId);
+    }
+
+    /** 1-based позиция варианта в уже загруженном отсортированном списке. */
+    private static int positionInList(List<Variant> variants, UUID variantId) {
+        for (int i = 0; i < variants.size(); i++) {
+            if (variants.get(i).getId().equals(variantId)) return i + 1;
+        }
+        return 1;
+    }
+
     private FormTokenInfoResponse buildVariantResponse(UUID assignmentId, UUID variantId) {
         FormAssignment assignment = formAssignmentRepository.findById(assignmentId).orElseThrow();
         Project project = projectRepository.findById(assignment.getProjectId()).orElseThrow();
-        Variant variant = variantRepository.findById(variantId).orElseThrow();
         List<Task> tasks = taskRepository.findByVariantIdOrderByIndexInVariantAsc(variantId);
         return new FormTokenInfoResponse("VARIANT", assignment.getId(), project.getTitle(),
-                variant.getIndexInProject(), toPublicTasks(tasks));
+                variantDisplayNumber(project.getId(), variantId), toPublicTasks(tasks));
     }
 
     private FormAssignmentResponse buildAssignmentResponse(FormAssignment assignment) {
         List<Variant> variants = variantRepository.findByProjectIdOrderByIndexInProjectAsc(assignment.getProjectId());
         List<FormStudentResponse> students = formStudentRepository.findByAssignmentId(assignment.getId())
                 .stream().map(s -> {
-                    int idx = variants.stream().filter(v -> v.getId().equals(s.getVariantId()))
-                            .findFirst().map(Variant::getIndexInProject).orElse(0);
+                    int idx = positionInList(variants, s.getVariantId());
                     return new FormStudentResponse(s.getId(), s.getFullName(), s.getVariantId(), idx, s.getAccessToken());
                 }).collect(Collectors.toList());
         List<FormVariantTokenResponse> tokens = formVariantTokenRepository.findByAssignmentId(assignment.getId())
                 .stream().map(vt -> {
-                    int idx = variants.stream().filter(v -> v.getId().equals(vt.getVariantId()))
-                            .findFirst().map(Variant::getIndexInProject).orElse(0);
+                    int idx = positionInList(variants, vt.getVariantId());
                     return new FormVariantTokenResponse(vt.getId(), vt.getVariantId(), idx, vt.getAccessToken());
                 }).collect(Collectors.toList());
         return new FormAssignmentResponse(assignment.getId(), assignment.getProjectId(),

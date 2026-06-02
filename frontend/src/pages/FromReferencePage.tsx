@@ -293,7 +293,7 @@ function QuickLaunchPanel({
         )}
         {busy && (
           <p className="text-center text-sm text-gray-400 mt-3">
-            GigaChat генерирует варианты — это займёт 10–30 секунд...
+            GigaChat генерирует варианты — это займёт 50–60 секунд...
           </p>
         )}
       </div>

@@ -15,7 +15,19 @@ public class FunctionEvaluator {
                 .replace(" ", "")
                 .replace("π", "pi")
                 .replace("**", "^");
+        expr = insertImplicitMultiplication(expr);
         return new Parser(expr, x).parseExpr();
+    }
+
+    /**
+     * Подставляет знак умножения там, где он опущен: {@code 2x → 2*x}, {@code 2( → 2*(},
+     * {@code )( → )*(}, {@code )x → )*x}, {@code 2sin → 2*sin}. GigaChat часто пишет {@code 2x^2}
+     * без звёздочки, и без этой нормализации график не строится.
+     */
+    private String insertImplicitMultiplication(String e) {
+        e = e.replaceAll("([0-9.])([a-zA-Z(])", "$1*$2");
+        e = e.replaceAll("(\\))([0-9a-zA-Z(])", "$1*$2");
+        return e;
     }
 
     public boolean isValid(String expression) {

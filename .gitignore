@@ -63,3 +63,4 @@ backend/src/main/resources/application-local.yml
 # ===== Claude Code =====
 .claude/
 memory/
+CLAUDE.md

@@ -24,6 +24,10 @@ function evalFn(expr: string, x: number): number {
     if (!expr || expr.length > 200) return NaN;
     // Заменяем математические функции на Math.*
     const sanitized = expr
+      // Неявное умножение: 2x → 2*x, 2( → 2*(, )( → )*(, )x → )*x, 2sin → 2*sin.
+      // GigaChat часто пишет 2x^2 без звёздочки — без этого график не строится.
+      .replace(/([0-9.])([a-zA-Z(])/g, '$1*$2')
+      .replace(/(\))([0-9a-zA-Z(])/g, '$1*$2')
       // Вставляем 0 перед унарным минусом (в начале или после открывающей скобки/оператора),
       // чтобы JS не выдавал SyntaxError при -(expr)**n и вычислял -(x^2), а не (-x)^2
       .replace(/(^|[+(,[])-/g, '$10-')
@@ -63,24 +67,69 @@ function toSvgY(y: number, yMin: number, yMax: number) {
   return PAD_T + (PLOT_H * (yMax - y)) / (yMax - yMin);
 }
 
-function fmt(v: number) {
-  if (Number.isInteger(v) && Math.abs(v) < 1e9) return String(v);
-  return v.toPrecision(3).replace(/\.?0+$/, '');
+function fmt(v: number, step = 1) {
+  // Округляем к ближайшему шагу сетки, чтобы убрать «хвосты» float (−0, 1.9999…)
+  const snapped = Math.round(v / step) * step;
+  const safe = Object.is(snapped, -0) ? 0 : snapped;
+  if (Number.isInteger(safe) && Math.abs(safe) < 1e9) return String(safe);
+  // Кол-во знаков после запятой выводим из шага сетки
+  const decimals = step < 1 ? Math.min(4, Math.ceil(-Math.log10(step))) : 0;
+  return safe.toFixed(decimals);
+}
+
+/** Ближайшее «красивое» число (1, 2, 5 × 10^k) — для шага сетки. */
+function niceNum(range: number, round: boolean): number {
+  const exp = Math.floor(Math.log10(range));
+  const f = range / Math.pow(10, exp);
+  let nf: number;
+  if (round) {
+    if (f < 1.5) nf = 1;
+    else if (f < 3) nf = 2;
+    else if (f < 7) nf = 5;
+    else nf = 10;
+  } else {
+    if (f <= 1) nf = 1;
+    else if (f <= 2) nf = 2;
+    else if (f <= 5) nf = 5;
+    else nf = 10;
+  }
+  return nf * Math.pow(10, exp);
+}
+
+/**
+ * Подбирает «красивые» границы и шаг оси так, чтобы деления попадали на круглые
+ * значения (…, −2, −1, 0, 1, 2, …) и по ним было удобно считывать координаты.
+ * Возвращает расширенные границы (min/max), шаг и список значений делений.
+ */
+function niceAxis(min: number, max: number, maxTicks = 6): { min: number; max: number; step: number; ticks: number[] } {
+  if (!isFinite(min) || !isFinite(max) || max - min < 1e-9) { min = min - 1; max = max + 1; }
+  const range = niceNum(max - min, false);
+  const step = niceNum(range / Math.max(1, maxTicks - 1), true);
+  const niceMin = Math.floor(min / step) * step;
+  const niceMax = Math.ceil(max / step) * step;
+  const ticks: number[] = [];
+  for (let v = niceMin; v <= niceMax + step * 0.5; v += step) {
+    ticks.push(Math.round(v / step) * step);
+  }
+  return { min: niceMin, max: niceMax, step, ticks };
 }
 
 export function FunctionGraphDisplay({ config }: { config: GraphConfig }) {
   const { fn } = config;
-  // Включаем x=0 (y-ось), с отступом чтобы ось не прижималась к краю
-  const cfgXMin = config.xMin;
-  const cfgXMax = config.xMax;
-  let xMin = Math.min(cfgXMin, 0);
-  let xMax = Math.max(cfgXMax, 0, xMin + 0.01);
-  // Добавляем отступ если ось Y (x=0) на самом краю или правее/левее видимой области.
-  // Условие >= 0 важно: если xMin=0, ось Y прижата к левому краю — нужен отступ.
-  if (cfgXMin >= 0) xMin = -xMax * 0.12;
-  else if (cfgXMax <= 0) xMax = -xMin * 0.12;
 
-  const { yMin, yMax, points } = useMemo(() => {
+  // ── Ось X: «красивые» границы, включающие x=0 ──
+  const xAxis = useMemo(() => {
+    let lo = Math.min(config.xMin, 0);
+    let hi = Math.max(config.xMax, 0, lo + 0.01);
+    // небольшой отступ, чтобы ось Y (x=0) не прижималась к краю
+    if (config.xMin >= 0) lo = -hi * 0.1;
+    else if (config.xMax <= 0) hi = -lo * 0.1;
+    return niceAxis(lo, hi, 8);
+  }, [config.xMin, config.xMax]);
+  const xMin = xAxis.min, xMax = xAxis.max;
+  const xStep = xAxis.step, xTicks = xAxis.ticks;
+
+  const { yMin, yMax, yStep, yTicks, points } = useMemo(() => {
     const ys: number[] = [];
     let actualYMin = Infinity, actualYMax = -Infinity;
     for (let i = 0; i <= SAMPLES; i++) {
@@ -93,24 +142,19 @@ export function FunctionGraphDisplay({ config }: { config: GraphConfig }) {
       }
     }
 
-    let yMinFinal: number, yMaxFinal: number;
+    let lo: number, hi: number;
     if (!isFinite(actualYMin)) {
-      yMinFinal = -5; yMaxFinal = 5;
+      lo = -5; hi = 5;
     } else {
-      const margin = Math.max((actualYMax - actualYMin) * 0.12, 0.5);
-      yMinFinal = actualYMin - margin;
-      yMaxFinal = actualYMax + margin;
+      const margin = Math.max((actualYMax - actualYMin) * 0.1, 0.5);
+      lo = actualYMin - margin;
+      hi = actualYMax + margin;
     }
-
-    // Ось X (y=0) должна быть видна и не прижата к краю.
-    // Если функция целиком выше/ниже нуля — добавляем отступ, чтобы ось была читаема.
-    if (yMinFinal > 0) {
-      yMinFinal = -Math.max((yMaxFinal - yMinFinal) * 0.12, 0.5);
-    } else if (yMaxFinal < 0) {
-      yMaxFinal = Math.max((yMaxFinal - yMinFinal) * 0.12, 0.5);
-    }
-    if (yMaxFinal - yMinFinal < 0.01) { yMinFinal -= 0.5; yMaxFinal += 0.5; }
-    return { yMin: yMinFinal, yMax: yMaxFinal, points: ys };
+    // Ось X (y=0) всегда должна быть в кадре
+    lo = Math.min(lo, 0);
+    hi = Math.max(hi, 0);
+    const ax = niceAxis(lo, hi, 6);
+    return { yMin: ax.min, yMax: ax.max, yStep: ax.step, yTicks: ax.ticks, points: ys };
   }, [fn, xMin, xMax]);
 
   // Разбиваем на сегменты (разрывы там где NaN)
@@ -130,9 +174,6 @@ export function FunctionGraphDisplay({ config }: { config: GraphConfig }) {
   }
   if (cur.length > 1) segments.push(cur.join(' '));
 
-  const gridXCount = Math.min(8, Math.max(4, Math.ceil(xMax - xMin)));
-  const gridYCount = Math.min(6, Math.max(4, Math.ceil(yMax - yMin)));
-
   // Оси — теперь всегда в диапазоне (xMin<=0<=xMax и yMin<=0<=yMax гарантированы)
   const axisXy = toSvgY(0, yMin, yMax);
   const axisYx = toSvgX(0, xMin, xMax);
@@ -145,14 +186,14 @@ export function FunctionGraphDisplay({ config }: { config: GraphConfig }) {
       style={{ border: '1px solid #ccc', background: '#fafafa', display: 'block', maxWidth: '100%' }}
       viewBox={`0 0 ${W} ${H}`}
     >
-      {/* Сетка */}
+      {/* Сетка — по «красивым» делениям осей */}
       <g stroke="#e0e0e0" strokeWidth={0.5}>
-        {Array.from({ length: gridXCount + 1 }, (_, i) => {
-          const svgX = PAD_L + (PLOT_W * i) / gridXCount;
+        {xTicks.map((xVal, i) => {
+          const svgX = toSvgX(xVal, xMin, xMax);
           return <line key={`gx${i}`} x1={svgX} y1={PAD_T} x2={svgX} y2={PAD_T + PLOT_H} />;
         })}
-        {Array.from({ length: gridYCount + 1 }, (_, j) => {
-          const svgY = PAD_T + (PLOT_H * j) / gridYCount;
+        {yTicks.map((yVal, j) => {
+          const svgY = toSvgY(yVal, yMin, yMax);
           return <line key={`gy${j}`} x1={PAD_L} y1={svgY} x2={PAD_L + PLOT_W} y2={svgY} />;
         })}
       </g>
@@ -169,20 +210,19 @@ export function FunctionGraphDisplay({ config }: { config: GraphConfig }) {
         <text x={axisYx + 3} y={PAD_T - 3} fontSize={10} fill="#555">y</text>
       </g>
 
-      {/* Метки X */}
+      {/* Метки X (0 не дублируем — он подписан на оси Y) */}
       <g fontSize={9} fill="#555" textAnchor="middle">
-        {Array.from({ length: gridXCount + 1 }, (_, i) => {
-          const xVal = xMin + ((xMax - xMin) * i) / gridXCount;
-          const svgX = PAD_L + (PLOT_W * i) / gridXCount;
-          return <text key={`lx${i}`} x={svgX} y={PAD_T + PLOT_H + 13}>{fmt(xVal)}</text>;
+        {xTicks.map((xVal, i) => {
+          if (Math.abs(xVal) < xStep * 0.5) return null;
+          const svgX = toSvgX(xVal, xMin, xMax);
+          return <text key={`lx${i}`} x={svgX} y={PAD_T + PLOT_H + 13}>{fmt(xVal, xStep)}</text>;
         })}
       </g>
       {/* Метки Y */}
       <g fontSize={9} fill="#555" textAnchor="end">
-        {Array.from({ length: gridYCount + 1 }, (_, j) => {
-          const yVal = yMax - ((yMax - yMin) * j) / gridYCount;
-          const svgY = PAD_T + (PLOT_H * j) / gridYCount;
-          return <text key={`ly${j}`} x={PAD_L - 4} y={svgY + 3}>{fmt(yVal)}</text>;
+        {yTicks.map((yVal, j) => {
+          const svgY = toSvgY(yVal, yMin, yMax);
+          return <text key={`ly${j}`} x={PAD_L - 4} y={svgY + 3}>{fmt(yVal, yStep)}</text>;
         })}
       </g>
 
@@ -200,11 +240,6 @@ export function FunctionGraphDisplay({ config }: { config: GraphConfig }) {
 
       {/* Рамка */}
       <rect x={PAD_L} y={PAD_T} width={PLOT_W} height={PLOT_H} fill="none" stroke="#999" strokeWidth={1} />
-
-      {/* Подпись */}
-      <text x={W / 2} y={H - 4} fontSize={10} fill="#1e6fbf" textAnchor="middle">
-        y = {fn}
-      </text>
     </svg>
   );
 }

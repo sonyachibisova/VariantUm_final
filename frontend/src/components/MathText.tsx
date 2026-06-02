@@ -38,9 +38,34 @@ function normalizeEnvironments(tex: string): string {
         b = b.replace(/[ \t]*\r?\n[ \t]*/g, ' \\\\ ');
         b = b.replace(/([^\\])\\(?=[ \t]|$)/g, '$1\\\\ ');
       }
+      // Убираем пустые строки от «лишних» разделителей \\ (ведущих, замыкающих, повторных) —
+      // частый дефект: \begin{cases} \\ ... \\ \end{cases} рисует пустые ряды.
+      b = b.replace(/^(?:\s*\\\\\s*)+/, ' ');
+      b = b.replace(/(?:\s*\\\\\s*)+$/, ' ');
+      b = b.replace(/(?:\s*\\\\\s*){2,}/g, ' \\\\ ');
       return `${begin}${b}${end}`;
     },
   );
+}
+
+// Многобуквенные LaTeX-команды, которые слабые модели пишут БЕЗ ведущего слэша.
+// Имена окружений (cases/array/matrix/aligned) сюда НЕ входят — они аргументы \begin{…}.
+const LATEX_CMDS =
+  'dfrac|frac|sqrt|cdot|times|div|leq|geq|neq|approx|equiv|pm|mp|infty|' +
+  'left|right|sum|prod|int|lim|vec|overline|cdots|ldots|' +
+  'sin|cos|tan|cot|log|ln|alpha|beta|gamma|delta|theta|lambda|sigma|phi|omega|' +
+  'Delta|Sigma|Omega|Rightarrow|perp|parallel|angle|pi';
+const LATEX_CMD_RE = new RegExp('(^|[^\\\\a-zA-Z])(' + LATEX_CMDS + ')\\b', 'g');
+
+/**
+ * Возвращает потерянный ведущий слэш командам LaTeX: «frac» → «\frac», «begin{…}» → «\begin{…}».
+ * Слабые модели иногда теряют слэш целиком (тогда KaTeX печатает «frac6y» как текст).
+ * Корректные \frac/\begin не трогаются (перед ними уже стоит слэш).
+ */
+function repairLatexCommands(tex: string): string {
+  let t = tex.replace(/(^|[^\\a-zA-Z])(begin|end)(\s*\{)/g, '$1\\$2$3');
+  t = t.replace(LATEX_CMD_RE, '$1\\$2');
+  return t;
 }
 
 /**
@@ -61,7 +86,20 @@ function splitBareEnvironments(text: string): Segment[] {
   return out;
 }
 
-function tokenize(input: string): Segment[] {
+/**
+ * Восстанавливает LaTeX-команды, испорченные JSON-парсингом на бэкенде:
+ * \frac/\binom/\beta… начинаются с \f или \b — это валидные JSON-escape'ы (form-feed U+000C,
+ * backspace U+0008), поэтому в уже сохранённых данных команда могла превратиться в управляющий
+ * символ + «rac». Возвращаем их обратно в \f… / \b… (для новых генераций это чинится на бэкенде).
+ */
+function restoreLatexControlChars(s: string): string {
+  return s.replace(/\u000C/g, '\\f').replace(/\u0008/g, '\\b');
+}
+
+function tokenize(rawInput: string): Segment[] {
+  // Восстанавливаем потерянный слэш у \begin/\end, чтобы «голые» окружения (без $) распознавались.
+  const input = restoreLatexControlChars(rawInput)
+    .replace(/(^|[^\\a-zA-Z])(begin|end)(\s*\{)/g, '$1\\$2$3');
   const segments: Segment[] = [];
   const regex = /(\$\$[\s\S]+?\$\$|\$[^$\n]+?\$)/g;
   let lastIndex = 0;
@@ -92,7 +130,7 @@ function tokenize(input: string): Segment[] {
 
 function renderMath(tex: string, display: boolean): string {
   try {
-    return katex.renderToString(normalizeEnvironments(tex), {
+    return katex.renderToString(normalizeEnvironments(repairLatexCommands(tex)), {
       displayMode: display,
       throwOnError: false,
       strict: false,

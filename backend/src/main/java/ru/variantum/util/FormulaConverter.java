@@ -64,6 +64,17 @@ public class FormulaConverter {
     private static final Pattern SUB_CHAR = Pattern.compile("_(\\\\?[0-9A-Za-z+\\-=()])");
     private static final Pattern LEFTOVER_CMD = Pattern.compile("\\\\([a-zA-Z]+)");
 
+    // Команды LaTeX, у которых слабые модели иногда теряют ведущий слэш (frac6y вместо \frac…).
+    // Берём только те, что НЕ встречаются как обычные слова в тексте задания (без sin/cos/left/right/pi).
+    private static final Pattern CMD_SLASH = Pattern.compile(
+            "(^|[^\\\\a-zA-Z])(frac|dfrac|sqrt|cdot|times|div|leq|geq|neq|approx|equiv|pm|infty|begin|end)\\b");
+
+    /** Возвращает потерянный ведущий слэш командам LaTeX («frac»→«\frac»); корректные не трогает. */
+    private String restoreCommandSlashes(String s) {
+        if (s == null) return s;
+        return CMD_SLASH.matcher(s).replaceAll("$1\\\\$2");
+    }
+
     // ─── HTML-рендеринг формул для PDF ────────────────────────────────────────
 
     /**
@@ -123,7 +134,7 @@ public class FormulaConverter {
     }
 
     private String latexToHtml(String latex, boolean display) {
-        String content = processLatexHtml(latex.trim());
+        String content = processLatexHtml(restoreCommandSlashes(latex.trim()));
         if (display) {
             return "<span style=\"display:block;text-align:center;margin:4pt 0;font-style:italic;\">" + content + "</span>";
         }
@@ -188,7 +199,7 @@ public class FormulaConverter {
     /** Конвертирует строку с возможными LaTeX-фрагментами в читаемый текст. */
     public String toReadable(String input) {
         if (input == null || input.isEmpty()) return input;
-        String s = input;
+        String s = restoreCommandSlashes(input);
 
         // 1. снимаем разделители формул
         s = s.replace("$$", "").replace("\\(", "").replace("\\)", "")

@@ -32,7 +32,7 @@ public class LlmJsonUtil {
     }
 
     public <T> T parse(String rawText, Class<T> type) {
-        String json = extractJson(rawText);
+        String json = preFixLatexControlEscapes(extractJson(rawText));
         try {
             return lenientMapper.readValue(json, type);
         } catch (Exception first) {
@@ -52,6 +52,19 @@ public class LlmJsonUtil {
                 throw new LlmFailureException("LLM вернул невалидный JSON: " + second.getMessage(), false);
             }
         }
+    }
+
+    /**
+     * Чинит САМУЮ коварную ошибку LaTeX-в-JSON: {@code \frac}, {@code \binom}, {@code \beta},
+     * {@code \boxed} и т.п. начинаются с {@code \f} или {@code \b} — а это ВАЛИДНЫЕ JSON-escape'ы
+     * (form-feed и backspace). Поэтому Jackson молча парсит {@code \frac} как символ form-feed + "rac"
+     * (формула превращается в «rac{...}»), и обычный fallback-санитайзер не срабатывает — первый парс
+     * проходит «успешно». Удваиваем слэш у {@code \f}/{@code \b}, за которыми идёт буква: form-feed и
+     * backspace в школьных заданиях практически не встречаются, а LaTeX-команды — постоянно.
+     * Управляющие {@code \n}/{@code \r}/{@code \t} НЕ трогаем: переводы строк/табы здесь легитимны.
+     */
+    private String preFixLatexControlEscapes(String json) {
+        return json.replaceAll("\\\\([fb])(?=[A-Za-z])", "\\\\\\\\$1");
     }
 
     private String extractJson(String text) {

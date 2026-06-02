@@ -277,7 +277,7 @@ public class ExportService {
             String graphJson = inlineMatcher.group(1);
             String imageUrl  = inlineMatcher.group(2);
             if (graphJson != null) {
-                insertGraphIntoDocx(main, graphJson);
+                insertGraphIntoDocx(pkg, main, imgIdCounter, graphJson);
             } else if (imageUrl != null) {
                 addDocxImage(pkg, main, imageUrl.trim(), imgIdCounter);
             }
@@ -319,7 +319,8 @@ public class ExportService {
         if (!tableBuf.isEmpty()) buildDocxTable(main, tableBuf);
     }
 
-    private void insertGraphIntoDocx(MainDocumentPart main, String json) {
+    private void insertGraphIntoDocx(WordprocessingMLPackage pkg, MainDocumentPart main,
+                                     int[] imgIdCounter, String json) {
         try {
             if (json == null || json.isEmpty() || json.length() > 500) return;
             String fn = extractJsonString(json, "fn");
@@ -327,12 +328,32 @@ public class ExportService {
 
             double xMin = extractJsonDouble(json, "xMin", -5);
             double xMax = extractJsonDouble(json, "xMax", 5);
-
+            double yMin = extractJsonDouble(json, "yMin", 0);
+            double yMax = extractJsonDouble(json, "yMax", 0);
             if (xMax <= xMin) xMax = xMin + 10;
 
-            // Просто добавляем текст о графике (без визуального оформления)
-            String graphLabel = String.format("[График: y = %s]", fn);
-            addDocxParagraph(main, graphLabel, false);
+            byte[] png = graphSvgRenderer.renderPng(fn, xMin, xMax, yMin, yMax);
+            if (png == null) {
+                addDocxParagraph(main, String.format("[График: y = %s]", fn), false);
+                return;
+            }
+
+            org.docx4j.openpackaging.parts.WordprocessingML.BinaryPartAbstractImage imagePart =
+                    org.docx4j.openpackaging.parts.WordprocessingML.BinaryPartAbstractImage
+                            .createImagePart(pkg, png);
+            int id1 = imgIdCounter[0]++;
+            int id2 = imgIdCounter[0]++;
+            org.docx4j.dml.wordprocessingDrawing.Inline inline =
+                    imagePart.createImageInline("график", "график функции", id1, id2, false);
+
+            ObjectFactory factory = Context.getWmlObjectFactory();
+            Drawing drawing = factory.createDrawing();
+            drawing.getAnchorOrInline().add(inline);
+            R imgRun = factory.createR();
+            imgRun.getContent().add(factory.createRDrawing(drawing));
+            P imgPara = factory.createP();
+            imgPara.getContent().add(imgRun);
+            main.getContent().add(imgPara);
         } catch (Exception e) {
             log.warn("Не удалось добавить график в DOCX: {}", e.getMessage());
         }
@@ -686,8 +707,23 @@ public class ExportService {
     /** Удаляет markdown-заголовки (#, ##, …) и полужирный (**текст**), не затрагивая LaTeX. */
     private String stripMarkdown(String text) {
         if (text == null) return "";
+        text = normalizeStrayEscapes(text);
         text = MD_HEADER.matcher(text).replaceAll("");
         text = MD_BOLD.matcher(text).replaceAll("$1");
+        return text;
+    }
+
+    /**
+     * Чинит «сырые» спецсимволы в уже сохранённом тексте:
+     *  - form-feed/backspace, в которые JSON-парсер мог превратить \frac/\binom… → возвращаем в \f/\b;
+     *  - литеральные \r\n, \n → переносы строк, \t → пробел (но не LaTeX вида \neq, \nu).
+     */
+    private String normalizeStrayEscapes(String text) {
+        text = text.replace("\f", "\\f").replace("\b", "\\b");
+        text = text.replaceAll("\\\\r\\\\n", "\n")
+                   .replaceAll("\\\\n(?![A-Za-z])", "\n")
+                   .replaceAll("\\\\t(?![A-Za-z])", " ")
+                   .replaceAll("\\\\r(?![A-Za-z])", "");
         return text;
     }
 

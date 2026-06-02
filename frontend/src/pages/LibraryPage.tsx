@@ -7,6 +7,7 @@ import { authApi } from '../api/auth.api';
 import { useTour } from '../context/TourContext';
 import { buildTourFromPage } from '../tour/paths/choicePath';
 import { TOUR_MOCK_LIBRARY_ITEMS } from '../tour/tourMockData';
+import { LimitsBadge } from '../components/LimitsBadge';
 import './DashboardPage.css';
 
 const W = 1911;
@@ -458,7 +459,9 @@ export function LibraryPage() {
                 >Инструкция</p>
               </div>
 
-              <div ref={menuRef} style={{ marginLeft: 'auto', position: 'relative', flexShrink: 0 }}>
+              <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '16px', flexShrink: 0 }}>
+              {user && <LimitsBadge />}
+              <div ref={menuRef} style={{ position: 'relative', flexShrink: 0 }}>
                 {user && (
                   <>
                     <button
@@ -505,6 +508,7 @@ export function LibraryPage() {
                     )}
                   </>
                 )}
+              </div>
               </div>
             </div>
           </div>

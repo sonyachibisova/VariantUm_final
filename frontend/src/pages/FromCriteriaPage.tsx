@@ -1170,7 +1170,7 @@ export function FromCriteriaPage() {
       )}
       {mutation.isPending && (
         <p className="text-center text-sm text-gray-400 mt-3">
-          GigaChat генерирует задания — это займёт 10–30 секунд...
+          GigaChat генерирует задания — это займёт 50–60 секунд...
         </p>
       )}
     </main>
